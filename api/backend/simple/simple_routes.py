@@ -41,6 +41,15 @@ def affirmation():
     response.status_code = 200
     return response
 
+
+
+@simple_routes.route('/hello')
+def hello():
+    message = "<H1>Hello</H1>"
+    response = make_response(message)
+    response.status_code = 200
+    return response
+
 # ------------------------------------------------------------
 # Demonstrates how to redirect from one route to another. 
 @simple_routes.route('/message')
