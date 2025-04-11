@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 
-# streamlit supports reguarl and wide layout (how the controls
+# streamlit supports regular and wide layout (how the controls
 # are organized/displayed on the screen).
 st.set_page_config(layout = 'wide')
 
@@ -34,7 +34,7 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Sample Semester Project App')
+st.title('CookieByte: Where Cafes Run Smoothly')
 st.write('\n\n')
 st.write('### HI! As which user would you like to log in?')
 
@@ -42,7 +42,7 @@ st.write('### HI! As which user would you like to log in?')
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
 
-if st.button("Act as John, a Political Strategy Advisor", 
+if st.button("Act as Manager Mandy, the manager of 'Sip Happens Cafe'", 
             type = 'primary', 
             use_container_width=True):
     # when user clicks the button, they are now considered authenticated
@@ -57,7 +57,7 @@ if st.button("Act as John, a Political Strategy Advisor",
     logger.info("Logging in as Political Strategy Advisor Persona")
     st.switch_page('pages/00_Pol_Strat_Home.py')
 
-if st.button('Act as Mohammad, an USAID worker', 
+if st.button("Act as Connor Cashier, the frontline worker of 'Sip Happens'", 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
@@ -65,13 +65,28 @@ if st.button('Act as Mohammad, an USAID worker',
     st.session_state['first_name'] = 'Mohammad'
     st.switch_page('pages/10_USAID_Worker_Home.py')
 
-if st.button('Act as System Administrator', 
+if st.button("Act as Sally Supplier, the contracted delivery driver", 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
     st.session_state['first_name'] = 'SysAdmin'
     st.switch_page('pages/20_Admin_Home.py')
-
+    
+if st.button("Act as Customer Carl, a regular customer", 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'customer'
+    st.session_state['first_name'] = 'Carl'
+    st.switch_page('pages/40_Customer_Home.py')
+    
+if st.button("Act as Baker Pearl, the finest baker at 'Sip Happens'", 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'administrator'
+    st.session_state['first_name'] = 'SysAdmin'
+    st.switch_page('pages/20_Admin_Home.py')
 
 

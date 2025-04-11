@@ -4,14 +4,16 @@ from modules.nav import SideBarLinks
 
 SideBarLinks()
 
-st.write("# About this App")
+st.write("# About CookieByte")
 
 st.markdown (
     """
     This is a demo app for CS 3200 Course Project.  
 
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
+    CookieByte is a user-friendly app designed to optimize 
+    cafe operations for customers, employees, and suppliers.
+    By streamlining operations and improving data visibility, 
+    CookieByte helps cafes reduce waste, boost sales, and increase profitability
 
     Stay tuned for more information and features to come!
     """

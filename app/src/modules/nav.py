@@ -54,7 +54,13 @@ def AdminPageNav():
     st.sidebar.page_link(
         "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
     )
-
+    
+#### ------------------------ Customer Role ------------------------
+def CustomerHomeNav():
+    st.sidebar.page_link("pages/40_Customer_Home.py", label="Customer Home", icon="💁🏾")
+    
+def MenuApiNav():
+    st.sidebar.page_link("pages/41_Menu_API.py", label="Menu API", icon="☕️")
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -92,6 +98,12 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminPageNav()
+            
+        # If the user is a customer, give them access to the customer pages (menu)
+        if st.session_state["role"] == "customer":
+            CustomerHomeNav()
+            MenuApiNav()
+                
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()

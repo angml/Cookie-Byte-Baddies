@@ -9,17 +9,24 @@ SideBarLinks()
 
 st.write("# Accessing a REST API from Within Streamlit")
 
-"""
-Simply retrieving data from a REST api running in a separate Docker Container.
+supplyOrders = requests.get('http://api:4000/so/supply-orders').json()
 
-If the container isn't running, this will be very unhappy.  But the Streamlit app 
-should not totally die. 
-"""
-data = {} 
-try:
-  data = requests.get('http://api:4000/data').json()
+try: 
+  st.dataframe(supplyOrders)
 except:
-  st.write("**Important**: Could not connect to sample api, so using dummy data.")
-  data = {"a":{"b": "123", "c": "hello"}, "z": {"b": "456", "c": "goodbye"}}
+  st.write("Could not connect to database to retrieve supply orders.")
 
-st.dataframe(data)
+# """
+# Simply retrieving data from a REST api running in a separate Docker Container.
+
+# If the container isn't running, this will be very unhappy.  But the Streamlit app 
+# should not totally die. 
+# """
+# data = {} 
+# try:
+#   data = requests.get('http://api:4000/data').json()
+# except:
+#   st.write("**Important**: Could not connect to sample api, so using dummy data.")
+#   data = {"a":{"b": "123", "c": "hello"}, "z": {"b": "456", "c": "goodbye"}}
+
+# st.dataframe(data)
