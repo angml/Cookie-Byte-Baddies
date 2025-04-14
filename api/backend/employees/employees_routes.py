@@ -1,44 +1,49 @@
-from flask import Blueprint, request, jsonify, make_response, current_app
-import json
+from flask import Blueprint, request, jsonify, make_response
 from backend.db_connection import db
-from backend.ml_models.model01 import predict
-
-#------------------------------------------------------------
-# Get all employees from the system
 
 employees = Blueprint('employees', __name__)
 
-@employees.route('/employees', methods = ['GET'])
+# ----------------------------------------
+# GET all employees
+@employees.route('/employees', methods=['GET'])
 def get_all_employees():
-    
     query = '''
-        SELECT id, name, position, wage_per_hour
-        FROM employees
+        SELECT ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID
+        FROM Employee
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query)
-    theData = cursor.fetchall()
-    return make_response(jsonify(theData), 200)
+    rows = cursor.fetchall()
+
+    column_names = [desc[0] for desc in cursor.description]
+    data = [dict(zip(column_names, row)) for row in rows]
+
+    return jsonify(data)
 
 
-@employee.route('/employees', methods = ['POST'])
+# ----------------------------------------
+# INSERT a new employee
+@employees.route('/employees', methods=['POST'])
 def add_employee():
     data = request.json
     query = '''
-        INSERT INTO Employee (Name, Position, Wage, HoursWorked, ManagerID)
-        Values (%s, %s, %s, %s, %s)
+        INSERT INTO Employee (FirstName, LastName, Position, Wage, HoursWorked, ManagerID)
+        VALUES (%s, %s, %s, %s, %s, %s)
     '''
     cursor = db.get_db().cursor()
     cursor.execute(query, (
-        data['Name'], data['Position'], data['Wage'],
-        data.get('HoursWorked', 0), data.get('ManagerID')
+        data['FirstName'], data['LastName'], data['Position'],
+        data['Wage'], data['HoursWorked'], data['ManagerID']
     ))
-    db.get_db(commit())
+    db.get_db().commit()
     return make_response("Employee added!", 201)
 
-@employee.route('/employees/<int:id>', methods = ['PUT'])
-def update_employee(jd):
-    data = '''
+# ----------------------------------------
+# UPDATE an employee’s wage
+@employees.route('/employees/<int:id>', methods=['PUT'])
+def update_employee(id):
+    data = request.json
+    query = '''
         UPDATE Employee
         SET Wage = %s
         WHERE ID = %s
@@ -48,7 +53,9 @@ def update_employee(jd):
     db.get_db().commit()
     return make_response("Employee wage updated successfully.", 200)
 
-@employees.route('/employees/<int:id>', methods = ['DELETE'])
+# ----------------------------------------
+# DELETE an employee
+@employees.route('/employees/<int:id>', methods=['DELETE'])
 def delete_employee(id):
     query = '''
         DELETE FROM Employee
@@ -59,11 +66,12 @@ def delete_employee(id):
     db.get_db().commit()
     return make_response("Employee terminated", 200)
 
-
-@employees.route('/employees/position/<position>', methods = ['GET'])
+# ----------------------------------------
+# GET all employees by position
+@employees.route('/employees/position/<position>', methods=['GET'])
 def get_employees_by_position(position):
     query = '''
-        SELECT ID, Name, Position, Wage
+        SELECT ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID
         FROM Employee
         WHERE Position = %s
     '''

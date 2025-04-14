@@ -24,4 +24,12 @@ if st.button('View and Manage: SALES',
              use_container_width=True):
   st.switch_page('pages/02_Sales.py')
 
-  
+if st.button('View and Manage: EMPLOYEES',
+             type = 'primary',
+             use_container_width = True):
+  st.switch_page('pages/03_Employees.py')
+
+if st.button('View and Manage: Suppliers',
+            type = 'primary',
+            use_container_width = True):
+  st.switch_page('pages/04_Suppliers.py')
