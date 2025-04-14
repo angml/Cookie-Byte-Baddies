@@ -14,20 +14,20 @@ def AboutPageNav():
 
 
 #### ------------------------ Examples for Role of pol_strat_advisor ------------------------
-def PolStratAdvHomeNav():
+def ManagerHomeNav():
     st.sidebar.page_link(
-        "pages/00_Manager_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/00_Manager_Home.py", label="Manager Home", icon="👤"
     )
 
 
-def WorldBankVizNav():
+def CostsNav():
     st.sidebar.page_link(
-        "pages/01_Costs.py", label="World Bank Visualization", icon="🏦"
+        "pages/01_Costs.py", label="Costs", icon="🏦"
     )
 
 
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Sales.py", label="Map Demonstration", icon="🗺️")
+def SalesNav():
+    st.sidebar.page_link("pages/02_Sales.py", label="Sales", icon="🗺️")
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
@@ -139,7 +139,13 @@ def SideBarLinks(show_home=False):
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "Manager":
+<<<<<<< Updated upstream
             ManagerPageNav()
+=======
+            ManagerHomeNav()
+            CostsNav()
+            SalesNav()
+>>>>>>> Stashed changes
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "usaid_worker":
