@@ -9,7 +9,7 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('Supply Admin Home Page')
+st.title('Super Admin Home Page')
 
 if st.button('Ingredients', 
              type='primary',
