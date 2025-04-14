@@ -1,38 +1,86 @@
-import logging
-logger = logging.getLogger(__name__)
-
 import streamlit as st
-from modules.nav import SideBarLinks
 import requests
 
-st.set_page_config(layout = 'wide')
+st.set_page_config(layout='wide')
+st.title("🍪 All Suppliers")
 
-# Display the appropriate sidebar links for the role of the logged in user
-SideBarLinks()
+BASE_URL = "http://localhost:8502"  
 
-st.title('Prediction with Regression')
+# Add new supplier form
+st.subheader("➕ Add New Supplier")
+with st.form("add_supplier_form"):
+    name = st.text_input("Supplier Name")
+    phone = st.text_input("Phone Number")
+    email = st.text_input("Email Address")
+    
+    submitted = st.form_submit_button("Add Supplier")
+    
+    if submitted:
+        if name and phone and email:
+            new_supplier = {
+                "Name": name,
+                "Phone": phone,
+                "Email": email
+            }
+            res = requests.post(BASE_URL, json=new_supplier)
+            if res.status_code == 201:
+                st.success("Supplier added successfully.")
+            else:
+                st.error(f"Failed to add supplier: {res.text}")
+        else:
+            st.error("Please fill in all fields.")
 
-# create a 2 column layout
-col1, col2 = st.columns(2)
+st.divider()
 
-# add one number input for variable 1 into column 1
-with col1:
-  var_01 = st.number_input('Variable 01:',
-                           step=1)
+# Fetch and display suppliers
+response = requests.get(BASE_URL)
 
-# add another number input for variable 2 into column 2
-with col2:
-  var_02 = st.number_input('Variable 02:',
-                           step=1)
+try:
+    response.raise_for_status()
 
-logger.info(f'var_01 = {var_01}')
-logger.info(f'var_02 = {var_02}')
+    if "application/json" not in response.headers.get("Content-Type", ""):
+        st.error("Server did not return JSON data.")
+        st.stop()
 
-# add a button to use the values entered into the number field to send to the 
-# prediction function via the REST API
-if st.button('Calculate Prediction',
-             type='primary',
-             use_container_width=True):
-  results = requests.get(f'http://api:4000/c/prediction/{var_01}/{var_02}').json()
-  st.dataframe(results)
-  
+    suppliers = response.json()
+
+except requests.exceptions.HTTPError as http_err:
+    st.error(f"HTTP error occurred: {http_err}")
+    st.stop()
+except requests.exceptions.JSONDecodeError as json_err:
+    st.error(f"JSON decode error: {json_err}")
+    st.stop()
+except Exception as e:
+    st.error(f"Unexpected error: {e}")
+    st.stop()
+
+# Display suppliers in expandable sections
+for supplier in suppliers:
+    with st.expander(f"{supplier['Name']} (ID: {supplier['ID']})"):
+        st.write(f"**Phone:** {supplier['Phone']}")
+        st.write(f"**Email:** {supplier['Email']}")
+
+        # Update contact information
+        col1, col2 = st.columns(2)
+
+        with col1:
+            update_phone = st.text_input(f"New phone for {supplier['Name']}", key=f"update_phone_{supplier['ID']}")
+            update_email = st.text_input(f"New email for {supplier['Name']}", key=f"update_email_{supplier['ID']}")
+            if st.button(f"Update Contact Info for {supplier['Name']}", key=f"update_{supplier['ID']}"):
+                if update_phone and update_email:
+                    update_data = {"Phone": update_phone, "Email": update_email}
+                    res = requests.put(f"{BASE_URL}/{supplier['ID']}", json=update_data)
+                    if res.status_code == 200:
+                        st.success(f"Supplier {supplier['Name']} updated successfully!")
+                    else:
+                        st.error(f"Failed to update supplier: {res.text}")
+                else:
+                    st.error("Please provide both phone and email.")
+
+        with col2:
+            if st.button(f"Terminate Contract for {supplier['Name']}", key=f"delete_{supplier['ID']}"):
+                res = requests.delete(f"{BASE_URL}/{supplier['ID']}")
+                if res.status_code == 200:
+                    st.success(f"Supplier {supplier['Name']} contract terminated successfully!")
+                else:
+                    st.error(f"Failed to terminate supplier contract: {res.text}")

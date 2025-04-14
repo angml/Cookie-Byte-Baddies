@@ -32,4 +32,4 @@ if st.button('View and Manage: EMPLOYEES',
 if st.button('View and Manage: Suppliers',
             type = 'primary',
             use_container_width = True):
-  st.switch_page('pages/03_Suppliers.py')
+  st.switch_page('pages/04_Suppliers.py')
