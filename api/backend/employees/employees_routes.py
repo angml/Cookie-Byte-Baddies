@@ -8,8 +8,9 @@ from backend.ml_models.model01 import predict
 
 employees = Blueprint('employees', __name__)
 
-@employees.route('/employees', methods=['GET'])
+@employees.route('/employees', methods = ['GET'])
 def get_all_employees():
+    
     query = '''
         SELECT id, name, position, wage_per_hour
         FROM employees
@@ -20,63 +21,53 @@ def get_all_employees():
     return make_response(jsonify(theData), 200)
 
 
-#------------------------------------------------------------
-# Get individual employee information
-
-employee_id = Blueprint('employee_id', __name__)
-
-@employee_id.route('/employees/<id>', methods=['POST'])
-def add_employee(id):
+@employee.route('/employees', methods = ['POST'])
+def add_employee():
     data = request.json
-    name = data['name']
-    position = data['position']
-    wage = data['wage_per_hour']
-    query = f'''
-        INSERT INTO employees (id, name, position, wage_per_hour)
-        VALUES ({id}, '{name}', '{position}', {wage})
+    query = '''
+        INSERT INTO Employee (Name, Position, Wage, HoursWorked, ManagerID)
+        Values (%s, %s, %s, %s, %s)
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query)
-    db.get_db().commit()
-    return make_response("Employee added", 200)
+    cursor.execute(query, (
+        data['Name'], data['Position'], data['Wage'],
+        data.get('HoursWorked', 0), data.get('ManagerID')
+    ))
+    db.get_db(commit())
+    return make_response("Employee added!", 201)
 
-@employee_id.route('/employees/<id>', methods=['PUT'])
-def update_wage(id):
-    data = request.json
-    new_wage = data['wage_per_hour']
-    query = f'''
-        UPDATE employees
-        SET wage_per_hour = {new_wage}
-        WHERE id = {id}
+@employee.route('/employees/<int:id>', methods = ['PUT'])
+def update_employee(jd):
+    data = '''
+        UPDATE Employee
+        SET Wage = %s
+        WHERE ID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query)
+    cursor.execute(query, (data['Wage'], id))
     db.get_db().commit()
-    return make_response("Wage updated", 200)
+    return make_response("Employee wage updated successfully.", 200)
 
-@employee_id.route('/employees/<id>', methods=['DELETE'])
+@employees.route('/employees/<int:id>', methods = ['DELETE'])
 def delete_employee(id):
-    query = f'''
-        DELETE FROM employees
-        WHERE id = {id}
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    db.get_db().commit()
-    return make_response("Employee deleted", 200)
-
-#------------------------------------------------------------
-# Get employee position information
-
-employees = Blueprint('employees', __name__)
-
-@employees.route('/employees', methods=['GET'])
-def get_all_employees():
     query = '''
-        SELECT id, name, position, wage_per_hour
-        FROM employees
+        DELETE FROM Employee
+        WHERE ID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query)
-    theData = cursor.fetchall()
-    return make_response(jsonify(theData), 200)
+    cursor.execute(query, (id,))
+    db.get_db().commit()
+    return make_response("Employee terminated", 200)
+
+
+@employees.route('/employees/position/<position>', methods = ['GET'])
+def get_employees_by_position(position):
+    query = '''
+        SELECT ID, Name, Position, Wage
+        FROM Employee
+        WHERE Position = %s
+    '''
+    cursor = db.get_db().cursor()
+    cursor.execute(query, (position,))
+    data = cursor.fetchall()
+    return make_response(jsonify(data), 200)
