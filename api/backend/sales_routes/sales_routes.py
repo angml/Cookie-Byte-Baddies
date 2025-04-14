@@ -64,3 +64,6 @@ def get_total_sales_for_menu_item(menu_item_name):
         item_name, total_revenue = row
 
     return make_response(jsonify({"MenuItem": item_name, "TotalRevenue": total_revenue}), 200)
+
+
+#TOP 5 SALES. THERE NEEDS TO BE TWO MORE SALES. 

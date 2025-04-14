@@ -71,7 +71,9 @@ INSERT INTO Employee(ID, FirstName, Position, Wage, HoursWorked, ManagerID, Last
 INSERT INTO Costs(CostID, Type, PaymentDate, PaymentAmount, ManagerID, SupplyOrderID)
      VALUES
             (1, 'Labor', '2025-03-24', 1500.00, 1, NULL),
-            (2, 'Supplies', '2025-03-15', 750.50, 2, 1);
+            (2, 'Supplies', '2025-03-15', 750.50, 2, 1),
+            (3, 'Utilities', '2025-03-15', 750.50, 3, 2);
+
 
 INSERT INTO Sales(SalesID, Date, TotalSales)
      VALUES

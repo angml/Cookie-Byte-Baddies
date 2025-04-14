@@ -93,7 +93,7 @@ def get_costs_by_date(cost_date):
 
 
 # Update a cost record that occurred on the given payment date
-@costs.route('/costs/id/<int:cost_id>', methods=['PUT'])
+@costs.route('/id/<int:cost_id>', methods=['PUT'])
 def update_cost_by_id(cost_id):
     new_data = request.json
     current_app.logger.info(new_data)
@@ -101,7 +101,7 @@ def update_cost_by_id(cost_id):
     new_type = new_data['Type']
     new_date = new_data['PaymentDate']
     new_amount = new_data['PaymentAmount']
-    new_manager_id = new_data['ManagerID']
+    new_manager_id = new_data.get('ManagerID', None)
 
     query = '''
         UPDATE Costs
@@ -117,5 +117,4 @@ def update_cost_by_id(cost_id):
     db.get_db().commit()
 
     return make_response("Successfully updated cost", 200)
-
 

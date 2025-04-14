@@ -1,8 +1,10 @@
 import streamlit as st
 import pandas as pd
 import requests
+import os
 
 st.set_page_config(layout="wide")
+
 
 # Styling
 st.markdown(
@@ -57,6 +59,7 @@ for cost_type in cost_types:
         st.warning(f"Failed to fetch {cost_type} data. Error: {e}")
 
 # Convert to DataFrame
+
 if all_data:
     df = pd.DataFrame(all_data, columns=["CostID", "Type", "PaymentDate", "PaymentAmount"])
     df["PaymentDate"] = pd.to_datetime(df["PaymentDate"])
@@ -65,16 +68,26 @@ if all_data:
 
     # --- Update Cost Form ---
     st.markdown("---")
-    st.subheader("✏️ Update a Cost Record by Date")
+    st.subheader("✏️ Update a Cost Record by CostID")
 
-    # Let user select date from existing data
-    unique_dates = df["PaymentDate"].dt.date.unique()
-    selected_date = st.selectbox("Select a date to update", sorted(unique_dates))
+    cost_id = st.selectbox("Select a CostID to update", df["CostID"].unique())
+    row = df[df["CostID"] == cost_id].iloc[0]
 
     with st.form("update_cost_form"):
-        new_type = st.selectbox("New Cost Type", options=["labor", "supplies", "utilities"])
-        new_date = st.date_input("New Payment Date", value=selected_date)
-        new_amount = st.number_input("New Payment Amount", min_value=0.0, format="%.2f")
+        new_type = st.selectbox(
+            "New Cost Type",
+            options=["labor", "supplies", "utilities"],
+            index=["labor", "supplies", "utilities"].index(row["Type"].lower())
+        )
+
+        new_date = st.date_input("New Payment Date", value=row["PaymentDate"])
+
+        new_amount = st.number_input(
+            "New Payment Amount",
+            min_value=0.0,
+            format="%.2f",
+            value=float(row["PaymentAmount"])
+        )
 
         submitted = st.form_submit_button("Submit Update")
 
@@ -86,9 +99,7 @@ if all_data:
             }
 
             try:
-                # Format the selected date for the URL
-                selected_date_str = selected_date.strftime("%Y-%m-%d")
-                update_url = f"http://api:4000/costs/date/{selected_date_str}"
+                update_url = f"http://api:4000/costs/id/{cost_id}"  # ✅ FIXED: now updates by ID
                 response = requests.put(update_url, json=update_payload)
                 response.raise_for_status()
                 st.success("Cost updated successfully! Please refresh the page to see changes.")
@@ -97,3 +108,4 @@ if all_data:
                 st.text(f"Error: {e}")
 else:
     st.warning("No cost data found.")
+
