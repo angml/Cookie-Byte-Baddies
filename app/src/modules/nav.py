@@ -4,7 +4,6 @@
 
 import streamlit as st
 
-
 #### ------------------------ General ------------------------
 def HomeNav():
     st.sidebar.page_link("Home.py", label="Home", icon="🏠")
@@ -60,7 +59,21 @@ def CustomerHomeNav():
     st.sidebar.page_link("pages/40_Customer_Home.py", label="Customer Home", icon="💁🏾")
     
 def MenuApiNav():
-    st.sidebar.page_link("pages/41_Menu_API.py", label="Menu API", icon="☕️")
+    st.sidebar.page_link("pages/41_Menu_API.py", label="Menu", icon="☕️")
+    
+#### ------------------------ Baker Role ------------------------
+def BakerHomeNav():
+    st.sidebar.page_link("pages/50_Baker_Home.py", label="Baker Home", icon="👩🏿‍🍳")
+    
+def BakerStockNav():
+    st.sidebar.page_link("pages/51_Baker_MenuItem_Stock.py", label="Stock Tracker", icon="📈")
+    
+#### ------------------------ Cashier Role ------------------------
+def CashierHomeNav():
+    st.sidebar.page_link("pages/60_Cashier_Home.py", label="Cashier Home", icon="🍵")
+    
+def CashierStockNav():
+    st.sidebar.page_link("pages/61_Cashier_MenuItem_Stock.py", label="Stock Tracker", icon="📈")
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -69,7 +82,7 @@ def SideBarLinks(show_home=False):
     """
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/logo.png", width=150)
+    st.sidebar.image("assets/cookiebyte_logo.png", width=150)
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if "authenticated" not in st.session_state:
@@ -103,6 +116,16 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "customer":
             CustomerHomeNav()
             MenuApiNav()
+            
+        # If the user is a baker, give them access to the baker pages
+        if st.session_state["role"] == "baker":
+            BakerHomeNav()
+            #BakerStockNav()
+            
+        # If the user is a baker, give them access to the baker pages
+        if st.session_state["role"] == "cashier":
+            CashierHomeNav()
+            #CashierStockNav()
                 
 
     # Always show the About page at the bottom of the list of links

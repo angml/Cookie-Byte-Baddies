@@ -9,9 +9,9 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('System Admin Home Page')
+st.title('Supply Admin Home Page')
 
-if st.button('Update ML Models', 
+if st.button('Ingredients', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/21_ML_Model_Mgmt.py')

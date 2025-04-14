@@ -7,8 +7,11 @@ from backend.simple.simple_routes import simple_routes
 from backend.menu_items.menuItem_routes import menuItems
 from backend.supply_orders.supplyOrder_routes import supplyOrders
 from backend.cost_routes.cost_routes import costs
-import os
+
+import os 
 from dotenv import load_dotenv
+
+
 
 def create_app():
     app = Flask(__name__)
