@@ -3,8 +3,14 @@ import requests
 import pandas as pd
 from datetime import date
 
-# Set up the page
+from modules.nav import SideBarLinks
+
+
+
 st.set_page_config(layout="wide")
+
+# Show appropriate sidebar links for the role of the currently logged in user
+SideBarLinks()
 
 # Styling
 st.markdown(

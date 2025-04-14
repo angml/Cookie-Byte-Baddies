@@ -3,90 +3,78 @@
 # sample application for your project
 ##################################################
 
-# Set up basic logging infrastructure
 import logging
-logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# import the main streamlit library as well
-# as SideBarLinks function from src/modules folder
 import streamlit as st
 from modules.nav import SideBarLinks
 
+# Logging setup
+logging.basicConfig(format='%(filename)s:%(lineno)s:%(levelname)s -- %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # streamlit supports regular and wide layout (how the controls
 # are organized/displayed on the screen).
-st.set_page_config(layout = 'wide')
+st.set_page_config(page_title="CookieByte Login", layout="wide")
 
-# If a user is at this page, we assume they are not 
-# authenticated.  So we change the 'authenticated' value
-# in the streamlit session_state to false. 
+# Auth state
 st.session_state['authenticated'] = False
 
-# Use the SideBarLinks function from src/modules/nav.py to control
-# the links displayed on the left-side panel. 
-# IMPORTANT: ensure src/.streamlit/config.toml sets
-# showSidebarNavigation = false in the [client] section
+# Sidebar nav
 SideBarLinks(show_home=True)
 
-# ***************************************************
-#    The major content of this page
-# ***************************************************
+# --------------------------------------
+#           MAIN PAGE CONTENT
+# --------------------------------------
 
-# set the title of the page and provide a simple prompt. 
-logger.info("Loading the Home page of the app")
-st.title('CookieByte: Where Cafes Run Smoothly')
-st.write('\n\n')
-st.write('### HI! As which user would you like to log in?')
+# --- Hero Section ---
+st.markdown("""
+    <div style='text-align: center; padding: 3rem 1rem; background: linear-gradient(90deg, #1b0b6e 0%, #9985ff 100%); border-radius: 15px;'>
+        <h1 style='font-size: 3rem; margin-bottom: 0.5rem; color: white;'>🍪 CookieByte</h1>
+        <h3 style='margin-top: 0; color: white;'>Where Cafes Run Smoothly</h3>
+    </div>
+""", unsafe_allow_html=True)
 
-# For each of the user personas for which we are implementing
-# functionality, we put a button on the screen that the user 
-# can click to MIMIC logging in as that mock user. 
+st.write("## 👋 Hi there!")
+st.markdown("### Choose a role to log in as:")
 
-if st.button("Act as Manager Mandy, the manager of 'Sip Happens Cafe'", 
-            type = 'primary', 
-            use_container_width=True):
-    # when user clicks the button, they are now considered authenticated
-    st.session_state['authenticated'] = True
-    # we set the role of the current user
-    st.session_state['role'] = 'Manager'
-    # we add the first name of the user (so it can be displayed on 
-    # subsequent pages). 
-    st.session_state['first_name'] = 'Mandy'
-    # finally, we ask streamlit to switch to another page, in this case, the 
-    # landing page for this particular user type
-    logger.info("Logging in as Manager Mandy")
-    st.switch_page('pages/00_Manager_Home.py')
+st.divider()
 
-if st.button("Act as Connor Cashier, the frontline worker of 'Sip Happens'", 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'cashier'
-    st.session_state['first_name'] = 'Connor'
-    st.switch_page('pages/60_Cashier_Home.py')
+# --- Buttons Section ---
+# Split into two columns
+col1, col2 = st.columns(2, gap="large")
 
-if st.button("Act as Sally Supplier, the contracted delivery driver", 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
-    
-if st.button("Act as Customer Carl, a regular customer", 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'customer'
-    st.session_state['first_name'] = 'Carl'
-    st.switch_page('pages/40_Customer_Home.py')
-    
-if st.button("Act as Baker Pearl, the finest baker at 'Sip Happens'", 
-            type = 'primary', 
-            use_container_width=True):
-    st.session_state['authenticated'] = True
-    st.session_state['role'] = 'baker'
-    st.session_state['first_name'] = 'Pearl'
-    st.switch_page('pages/50_Baker_Home.py')
+with col1:
+    if st.button("🙋🏾 Manager Mandy - 'Sip Happens Cafe'", use_container_width=True, type='primary'):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'Manager'
+        st.session_state['first_name'] = 'Mandy'
+        logger.info("Logging in as Manager Mandy")
+        st.switch_page('pages/00_Manager_Home.py')
 
+    if st.button("👩🏿‍🍳 Baker Pearl - The finest baker", use_container_width=True, type='primary'):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'baker'
+        st.session_state['first_name'] = 'Pearl'
+        st.switch_page('pages/50_Baker_Home.py')
 
+    if st.button("🚚 Sally Supplier - Delivery Driver", use_container_width=True, type='primary'):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'administrator'
+        st.session_state['first_name'] = 'SysAdmin'
+        st.switch_page('pages/20_Admin_Home.py')
+
+with col2:
+    if st.button("💁🏾‍♂️ Connor Cashier - Frontline Worker", use_container_width=True, type='primary'):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'cashier'
+        st.session_state['first_name'] = 'Connor'
+        st.switch_page('pages/60_Cashier_Home.py')
+
+    if st.button("🧁 Customer Carl - Regular Customer", use_container_width=True, type='primary'):
+        st.session_state['authenticated'] = True
+        st.session_state['role'] = 'customer'
+        st.session_state['first_name'] = 'Carl'
+        st.switch_page('pages/40_Customer_Home.py')
+
+st.divider()
+
+st.markdown("<small style='color: gray;'>Tip: These roles are mock profiles used for demonstration purposes.</small>", unsafe_allow_html=True)
