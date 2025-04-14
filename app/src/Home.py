@@ -61,9 +61,9 @@ if st.button("Act as Connor Cashier, the frontline worker of 'Sip Happens'",
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
-    st.switch_page('pages/10_USAID_Worker_Home.py')
+    st.session_state['role'] = 'cashier'
+    st.session_state['first_name'] = 'Connor'
+    st.switch_page('pages/60_Cashier_Home.py')
 
 if st.button("Act as Sally Supplier, the contracted delivery driver", 
             type = 'primary', 
@@ -85,8 +85,8 @@ if st.button("Act as Baker Pearl, the finest baker at 'Sip Happens'",
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
-    st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
-    st.switch_page('pages/20_Admin_Home.py')
+    st.session_state['role'] = 'baker'
+    st.session_state['first_name'] = 'Pearl'
+    st.switch_page('pages/50_Baker_Home.py')
 
 
