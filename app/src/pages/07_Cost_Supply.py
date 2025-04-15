@@ -3,8 +3,12 @@ import requests
 import pandas as pd
 from datetime import date
 
-# Set up the page
+from modules.nav import SideBarLinks
+
 st.set_page_config(layout="wide")
+
+# Show appropriate sidebar links for the role of the currently logged in user
+SideBarLinks()
 
 # Styling
 st.markdown(
@@ -44,7 +48,7 @@ st.markdown(
 st.title("Supplies Costs")
 st.write("Here are the cost details for Supplies:")
 
-# --- Fetch costs ---
+# Fetch costs
 def fetch_supply_costs():
     try:
         response = requests.get('http://api:4000/costs/type/supplies')
@@ -60,7 +64,7 @@ def fetch_supply_costs():
 df = fetch_supply_costs()
 st.dataframe(df)
 
-# --- Form to add new supply cost ---
+# Form to add new supply cost
 st.markdown("---")
 st.subheader("Add a New Supply Cost")
 

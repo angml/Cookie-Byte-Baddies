@@ -7,13 +7,16 @@ import world_bank_data as wb
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
-from modules.nav import SideBarLinks
 import requests
+from modules.nav import SideBarLinks
 
-
+# Page Configuration 
 st.set_page_config(layout="wide")
 
-# Styling
+# Sidebar
+SideBarLinks()  
+
+# Styling 
 st.markdown(
     """
     <style>
@@ -48,46 +51,55 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
+# Page Header
 st.title("Costs Page")
 st.write("Select a cost type to view details:")
 
+# Navigation Buttons
+# Redirects to Labor Costs page
 if st.button("Labor", type="primary", use_container_width=True):
     st.switch_page("pages/05_Cost_Labor.py")  
 
+# Redirects to Utilities Costs page
 if st.button("Utilities", type="primary", use_container_width=True):
     st.switch_page("pages/06_Cost_Utilities.py")  
 
+# Redirects to Supplies Costs page
 if st.button("Supplies", type="primary", use_container_width=True):
     st.switch_page("pages/07_Cost_Supply.py")  
 
+# Redirects to full cost history sorted by date
 if st.button("View All Costs by Date", type="primary", use_container_width=True):
-    st.switch_page("pages/08_Cost_Dates.py")
+    st.switch_page("pages/08_Cost_Dates.py")  
 
-
-
-# --- Chart section ---
+# Cost Trend Charts Section
 st.markdown("---")
 st.subheader("📈 Monthly Cost Trends by Type")
 
-# Define base URL for each type
+# API base URL
 base_url = "http://api:4000/costs/type"
 
-# Reusable function for monthly line chart
+# Reusable Line Chart Function
 def get_monthly_line_chart(cost_type, color, title):
     try:
+        # Make GET request to Flask API to fetch cost data for the type
         response = requests.get(f"{base_url}/{cost_type.lower()}")
         response.raise_for_status()
         data = response.json()
+
+        # If no data, exit early
         if not data:
             return None
 
+        # Convert to DataFrame and extract month from date
         df = pd.DataFrame(data, columns=["CostID", "Type", "PaymentDate", "PaymentAmount", "ManagerID"])
         df["PaymentDate"] = pd.to_datetime(df["PaymentDate"])
         df["Month"] = df["PaymentDate"].dt.to_period("M").astype(str)
 
+        # Group by month and sum costs
         monthly_totals = df.groupby("Month")["PaymentAmount"].sum().reset_index()
 
+        # Create Plotly line chart
         fig = px.line(
             monthly_totals,
             x="Month",
@@ -97,6 +109,7 @@ def get_monthly_line_chart(cost_type, color, title):
             labels={"Month": "Month", "PaymentAmount": "Total Cost ($)"}
         )
 
+        # Styling for the chart
         fig.update_traces(line_color=color)
         fig.update_layout(
             template="plotly_white",
@@ -108,10 +121,11 @@ def get_monthly_line_chart(cost_type, color, title):
         return fig
 
     except Exception as e:
+        # Show error message if chart fails
         st.error(f"Error loading {cost_type} data: {e}")
         return None
 
-# Create columns for the 3 graphs
+# Render Charts in Columns
 col1, col2, col3 = st.columns(3)
 
 with col1:

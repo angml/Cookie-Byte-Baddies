@@ -3,8 +3,12 @@ import requests
 import pandas as pd
 from datetime import date
 
-# Set up the page
+from modules.nav import SideBarLinks
+
 st.set_page_config(layout="wide")
+
+# Show appropriate sidebar links for the role of the currently logged in user
+SideBarLinks()
 
 # Styling
 st.markdown(
@@ -44,7 +48,7 @@ st.markdown(
 st.title("Labor Costs")
 st.write("Here are the cost details for Labor:")
 
-# --- Fetch costs ---
+# Fetch costs
 def fetch_labor_costs():
     try:
         response = requests.get('http://api:4000/costs/type/labor')
@@ -61,7 +65,7 @@ df = fetch_labor_costs()
 st.dataframe(df)
 
 
-# --- Form to add new labor cost ---
+# Form to add new labor cost
 st.markdown("---")
 st.subheader("Add a New Labor Cost")
 
@@ -75,7 +79,7 @@ with st.form("add_labor_cost"):
             "Type": "labor",
             "PaymentDate": payment_date.strftime('%Y-%m-%d'),
             "PaymentAmount": payment_amount,
-            "ManagerID": 1  # Optional: remove if backend no longer expects it
+            "ManagerID": 1 
         }
 
         try:
