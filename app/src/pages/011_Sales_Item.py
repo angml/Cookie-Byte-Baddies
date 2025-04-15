@@ -3,11 +3,12 @@ import pandas as pd
 import requests
 from modules.nav import SideBarLinks
 
-# --- Page config & styling ---
+# Page configuration
 st.set_page_config(layout="wide")
 
 SideBarLinks()
 
+# Styling
 st.markdown("""
     <style>
         .stApp { background-color: #f3e8ff; }
@@ -31,11 +32,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Header ---
+# Header
 st.title("🍽️ Sales by Menu Item")
 st.write("Select a menu item from the dropdown to view its total revenue.")
 
-# --- Get menu items from /m/menu-items ---
+# Get menu items from /m/menu-items
 try:
     menu_response = requests.get("http://api:4000/m/menu-items")
     menu_response.raise_for_status()

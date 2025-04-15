@@ -64,3 +64,35 @@ def get_total_sales_for_menu_item(menu_item_name):
         item_name, total_revenue = row
 
     return make_response(jsonify({"MenuItem": item_name, "TotalRevenue": total_revenue}), 200)
+
+
+# Get total sales grouped by each day
+@sales.route('/sales/daily', methods=['GET'])
+def get_daily_sales_summary():
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT DATE(Date) AS SaleDate, SUM(TotalSales) AS DailyTotal
+        FROM Sales
+        GROUP BY DATE(Date)
+        ORDER BY DATE(Date);
+    '''
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return make_response(jsonify(data), 200)
+
+
+# Get total quantity sold for each menu item
+@sales.route('/sales/item-quantity', methods=['GET'])
+def get_sales_quantity_per_item():
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT m.Name, SUM(td.MenuItemQuantity) AS TotalQuantitySold
+        FROM TransactionDetails td
+        JOIN MenuItem m ON td.MenuItemID = m.ItemID
+        GROUP BY m.Name
+        ORDER BY TotalQuantitySold DESC;
+    '''
+    cursor.execute(query)
+    data = cursor.fetchall()
+    return make_response(jsonify(data), 200)
+

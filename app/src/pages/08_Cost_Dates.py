@@ -5,7 +5,6 @@ import os
 
 st.set_page_config(layout="wide")
 
-
 # Styling
 st.markdown(
     """
@@ -66,7 +65,7 @@ if all_data:
     df = df.sort_values(by="PaymentDate", ascending=True)
     st.dataframe(df)
 
-    # --- Update Cost Form ---
+    # Update Cost Form
     st.markdown("---")
     st.subheader("✏️ Update a Cost Record by CostID")
 
