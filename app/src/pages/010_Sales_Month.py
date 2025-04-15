@@ -2,9 +2,12 @@ import streamlit as st
 import pandas as pd
 import requests
 from datetime import datetime
+from modules.nav import SideBarLinks
 
 # --- Page config & styling ---
 st.set_page_config(layout="wide")
+
+SideBarLinks()
 
 st.markdown("""
     <style>

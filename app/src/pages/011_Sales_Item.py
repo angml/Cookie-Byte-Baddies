@@ -1,9 +1,12 @@
 import streamlit as st
 import pandas as pd
 import requests
+from modules.nav import SideBarLinks
 
 # --- Page config & styling ---
 st.set_page_config(layout="wide")
+
+SideBarLinks()
 
 st.markdown("""
     <style>
