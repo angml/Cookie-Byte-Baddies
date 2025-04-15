@@ -18,3 +18,8 @@ if st.button("View Menu Item Inventory",
              type='primary',
              use_container_width=True):
   st.switch_page('pages/61_Cashier_MenuItem_Stock.py')
+
+if st.button("View and Update Ingredient Inventory", 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/62_Cashier_Ingredient.py')

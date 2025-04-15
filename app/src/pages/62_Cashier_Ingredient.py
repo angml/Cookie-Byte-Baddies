@@ -13,7 +13,7 @@ SideBarLinks()
 
 st.title('Ingredients Page')
 
-# Gets the ingredient list with inventory and expiry date
+# Gets the ingredient list with all values but the IngredientID
 def get_ing_list():
     try:
         response = requests.get('http://web-api:4000/i/ingredients')
