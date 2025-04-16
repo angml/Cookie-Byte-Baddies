@@ -16,11 +16,8 @@ orders = Blueprint('Orders', __name__)
 @orders.route('/orders', methods=['GET'])
 def get_all_orders():
     query = '''
-        SELECT os.OrderTotal, os.OrderQuantity, os.DateOrdered, 
-        os.Delivery Date, os.ID, s.Name, m.Firstame, m.LastName
-        FROM SupplyOrder os JOIN Manager m 
-        ON os.ManagerID = m.ID
-        JOIN Supplier s ON s.ID = os.SupplierID;
+        SELECT os.ID, s.Name, os.OrderQuantity, os.OrderTotal, os.DateOrdered, os.DeliveryDate
+        FROM SupplyOrder os JOIN Supplier s ON s.ID = os.SupplierID;
     '''
     # get a cursor object from the database
     cursor = db.get_db().cursor()
@@ -35,106 +32,78 @@ def get_all_orders():
     response = make_response(jsonify(theData))
     # set the proper HTTP Status code of 200 (meaning all good)
     response.status_code = 200
+    response.mimetype='application/json'
     return response
-
 # ------------------------------------------------------------
-# LEFT OF HERE
-
 @orders.route('/orders', methods=['POST'])
-def add_new_equipment():
+def add_new_orders():
     # In a POST request, there is a 
     # collecting data from the request object
     data = request.json
-    current_app.longer.info(data)
 
-    #extracting the variable
+    #extracting data
     supplier_name = data["SupplierName"]
-    manager_name = data["ManagerName"]
+    manager_fname = data["ManagerFirstName"]
+    manager_lname = data["ManagerLastName"]
     total = data["OrderTotal"]
     quantity = data["OrderQuantity"]
     date_ordered = data["DateOrdered"]
     date_delivered = data["DeliveryDate"]
-    order_id = data["ID"]
 
-    query = f'''INSERT INTO SupplyOrder(SupplierID, ManagerID, OrderTotal, 
-                                        OrderQuantity, DateOrdered, DeliveryDate, ID)
-     VALUE({supplier_id},{manager_id},{total},{quantity},
-     {date_ordered}, {date_delivered}, {order_id})                                                                        
-    '''
-    current_app.logger.info(query)
-
-    # executing and committing the insert statement 
     cursor = db.get_db().cursor()
 
-    cursor.execute("SELECT ID FROM Manager WHERE Name = %s", (manager_name,))
+    # look up manager id based on name
+    cursor.execute("SELECT ID FROM Manager WHERE FirstName = %s AND  LastName = %s", (manager_fname, manager_lname))
     manager_row = cursor.fetchone()
     if not manager_row:
         return jsonify({"error": "Manager not found"}), 400
-    manager_id = manager_row[0]
+    manager_id = manager_row['ID']
 
+    # look up supplier id based on name
     cursor.execute("SELECT ID FROM Supplier WHERE Name = %s", (supplier_name,))
     supplier_row = cursor.fetchone()
     if not supplier_row:
         return jsonify({"error": "Supplier not found"}), 400
-    supplier_id = supplier_row[0]
+    supplier_id = supplier_row['ID']
 
-
-
-    db.get_db().commit()
-
-    response = make_response("Successfully added equipment")
-    response.status_code = 200
-    return response
-# ------------------------------------------------------------
-@equipment.route('/equipment', methods = ["PUT"])
-def update_equipment():
-    data = request.json
-    current_app.logger.info(info)
-
-    #variables
-    new_name = data["Name"]
-    new_price = data["Price"]
-    new_lifespan = data["Lifespan"]
-    new_id = data["ID"]
-
-    query = '''UPDATE Equipment
-                SET Name = %s,  
-                    Price = %f,
-                    Lifespan= %d, 
-                    ID = %d),                                                                       
+    # insert query with the supplier and manager ids
+    query = f'''INSERT INTO SupplyOrder(SupplierID, ManagerID, OrderTotal, 
+                                    OrderQuantity, DateOrdered, DeliveryDate)
+    VALUES(%s, %s, %s, %s, %s, %s);                                                                    
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (new_name, new_price, new_lifespan, new_id))
+    cursor.execute(query,(supplier_id, manager_id, total, quantity, date_ordered, date_delivered))
     db.get_db().commit()
 
-    return make_response("Successfully updated cost", 200)
-
-# ------------------------------------------------------------
-# get product information about a specific product
-# notice that the route takes <id> and then you see id
-# as a parameter to the function.  This is one way to send 
-# parameterized information into the route handler.
-    @products.route('/product/<id>', methods=['GET'])
-def get_product_detail (id):
-
-    query = f'''SELECT id, 
-                       product_name, 
-                       description, 
-                       list_price, 
-                       category 
-                FROM products 
-                WHERE id = {str(id)}
-    '''
-    
-    current_app.logger.info(f'GET /product/<id> query={query}')
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    theData = cursor.fetchall()
-    current_app.logger.info(f'GET /product/<id> Result of query = {theData}')
-    
-    response = make_response(jsonify(theData))
+    response = make_response("Successfully added order")
     response.status_code = 200
     return response
+# # ------------------------------------------------------------
+# # get product information about a specific product
+# # notice that the route takes <id> and then you see id
+# # as a parameter to the function.  This is one way to send 
+# # parameterized information into the route handler.
+#     @products.route('/product/<id>', methods=['GET'])
+# def get_product_detail (id):
+
+#     query = f'''SELECT id, 
+#                        product_name, 
+#                        description, 
+#                        list_price, 
+#                        category 
+#                 FROM products 
+#                 WHERE id = {str(id)}
+#     '''
+    
+#     current_app.logger.info(f'GET /product/<id> query={query}')
+#     cursor = db.get_db().cursor()
+#     cursor.execute(query)
+#     theData = cursor.fetchall()
+#     current_app.logger.info(f'GET /product/<id> Result of query = {theData}')
+    
+#     response = make_response(jsonify(theData))
+#     response.status_code = 200
+#     return response
 
 # # ------------------------------------------------------------
 # # Get the top 5 most expensive products from the database

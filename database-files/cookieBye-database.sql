@@ -43,8 +43,8 @@ CREATE TABLE Supplier
 CREATE TABLE SupplyOrder
 (
     ID            INT UNIQUE PRIMARY KEY,
-    SupplierID    INT UNIQUE, -- Foreign Key to Supplier
-    ManagerID     INT UNIQUE, -- Foreign Key to Manager (who created the order)
+    SupplierID    INT, -- Foreign Key to Supplier
+    ManagerID     INT, -- Foreign Key to Manager (who created the order)
     OrderTotal    DECIMAL(10, 2),
     OrderQuantity INT,
     DateOrdered   DATETIME,
@@ -55,6 +55,7 @@ CREATE TABLE SupplyOrder
     CONSTRAINT fk_2 FOREIGN KEY (`ManagerID`) REFERENCES Manager (`ID`)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
+ALTER TABLE SupplyOrder MODIFY ID INT AUTO_INCREMENT;
 
 -- Table: Ingredients
 CREATE TABLE Ingredients
@@ -85,6 +86,9 @@ CREATE TABLE Equipment
     Price    DECIMAL(10, 2),
     Lifespan INT
 );
+
+-- Alter the table to add AUTO_INCREMENT
+ALTER TABLE Equipment MODIFY ID INT AUTO_INCREMENT;
 
 -- Table: OrderQuantity
 -- This table represents the breakdown of a supply order into quantities for ingredients,

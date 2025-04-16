@@ -17,7 +17,7 @@ equipment = Blueprint('equipment', __name__)
 def get_all_equipment():
     cursor = db.get_db().cursor()
     query = '''
-        SELECT Name, Price, Lifespan
+        SELECT ID, Name, Price, Lifespan
         FROM Equipment;
     '''
     # get a cursor object from the database
@@ -42,19 +42,15 @@ def add_new_equipment():
     # In a POST request, there is a 
     # collecting data from the request object
     data = request.json
-    current_app.longer.info(data)
+    current_app.logger.info(data)
 
-    #extracting the variable
+    #extracting data
     name = data["Name"]
     price = data["Price"]
     lifespan = data["Lifespan"]
-    id = data["ID"]
-
-    query = f'''INSERT INTO Equipment(Name, 
-                                    Price, 
-                                    Lifespan, 
-                                    ID), 
-     VALUE('{name}',{price},{lifespan},{id})                                                                        
+   
+    query = f'''INSERT INTO Equipment(Name, Price, Lifespan) 
+     VALUES('{name}',{price},{lifespan});                                                                       
     '''
     current_app.logger.info(query)
 
@@ -76,16 +72,16 @@ def update_equipment():
     new_name = data["Name"]
     new_price = data["Price"]
     new_lifespan = data["Lifespan"]
-    new_id = data["ID"]
+    id = data["ID"]
 
     query = '''UPDATE Equipment
                 SET Name = %s,  
-                    Price = %f,
-                    Lifespan= %d, 
-                    ID = %d),                                                                       
+                    Price = %s,
+                    Lifespan= %s
+                WHERE ID = %s;                                                                    
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (new_name, new_price, new_lifespan, new_id))
+    cursor.execute(query, (new_name, new_price, new_lifespan, id))
     db.get_db().commit()
 
     return make_response("Successfully updated equipment", 200)
