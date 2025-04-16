@@ -4,14 +4,13 @@ logger = logging.getLogger(__name__)
 import streamlit as st
 from modules.nav import SideBarLinks
 import requests
+import altair as alt
 
 logger = logging.getLogger(__name__)
 
 st.set_page_config(layout = 'wide')
 
 SideBarLinks()
-
-st.title('Ingredients Page')
 
 
 st.markdown("""
@@ -37,6 +36,8 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+st.title('Ingredients Page')
+
 # Gets the ingredient list
 def get_ing_list():
     try:
@@ -60,14 +61,92 @@ else:
     st.write("No ingredients available.")
 
 
-# Update inventory number of ingredient
+st.write("### 📈 Top 10 Ingredients with the Highest Burn Rate")
+
+response = requests.get("http://web-api:4000/i/ingredients/burnrate/top")
+
+# Makes a bar chart of high burn rates
+if response.status_code == 200:
+    data = response.json()
+    df = pd.DataFrame(data)
+
+    df["BurnRate"] = pd.to_numeric(df["BurnRate"], errors="coerce")
+
+    df = df.sort_values(by="BurnRate", ascending=False)
+
+    chart = alt.Chart(df).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor='gray', gridOpacity=1, gridWidth=1.5)
+        ),
+        y=alt.Y("IngredientName:N", sort='-x', title="Ingredient"),
+        tooltip=["IngredientName", "BurnRate"]
+    ).properties(
+        width=700,
+        height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+else:
+    st.error("Failed to fetch burn rate data")
+
+
+st.write("### 📉 Top 10 Ingredients with the Lowest Burn Rate")
+
+response = requests.get("http://web-api:4000/i/ingredients/burnrate/bottom")
+
+# Makes a bar chart with the lowest burn rate
+if response.status_code == 200:
+    data = response.json()
+    df_bottom = pd.DataFrame(data)
+
+    df_bottom["BurnRate"] = pd.to_numeric(df_bottom["BurnRate"], errors="coerce")
+
+    df_bottom = df_bottom.sort_values(by="BurnRate", ascending=True)
+
+    bottom_chart = alt.Chart(df_bottom).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df_bottom["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor='gray', gridOpacity=1, gridWidth=1.5)
+        ),
+        y=alt.Y("IngredientName:N", sort='x', title="Ingredient"),
+        tooltip=["IngredientName", "BurnRate"]
+    ).properties(
+        width=700,
+        height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
+    )
+
+    st.altair_chart(bottom_chart, use_container_width=True)
+
+else:
+    st.error("Failed to fetch lowest burn rate data")
+
+
+
+# Update inventory number
 response = requests.get('http://web-api:4000/i/ingredients')
 ing_items = response.json()
+
 
 st.write("### ➕ Update Inventory of an Ingredient")
 selected_ingredient = st.selectbox("Select Ingredient to Update", [item['IngredientName'] for item in ing_items])
 new_inventory = st.number_input("Enter New Inventory Number", min_value=0, step=1)
-    
+
+
+# Updates the inventory of a selected ingredient
 if st.button("Update Inventory"):
     # Get the selected item's ID 
     inv_to_update = next(item for item in ing_items if item['IngredientName'] == selected_ingredient)

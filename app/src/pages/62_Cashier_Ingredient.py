@@ -11,8 +11,6 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('Ingredients Page')
-
 
 st.markdown("""
     <style>
@@ -37,7 +35,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Gets the ingredient list
+st.title('Ingredients Page')
+
+# Gets the ingredient list with all values but the IngredientID
 def get_ing_list():
     try:
         response = requests.get('http://web-api:4000/i/ingredients')
@@ -60,9 +60,10 @@ else:
     st.write("No ingredients available.")
 
 
-# Update inventory number of ingredient
+# Update inventory number
 response = requests.get('http://web-api:4000/i/ingredients')
 ing_items = response.json()
+
 
 st.write("### ➕ Update Inventory of an Ingredient")
 selected_ingredient = st.selectbox("Select Ingredient to Update", [item['IngredientName'] for item in ing_items])

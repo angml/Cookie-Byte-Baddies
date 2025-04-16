@@ -1,122 +1,135 @@
-########################################################
-# Sample customers blueprint of endpoints
-# Remove this file if you are not using it in your project
-########################################################
-from flask import Blueprint
-from flask import request
-from flask import jsonify
-from flask import make_response
-from flask import current_app
+from flask import Blueprint, request, jsonify, make_response, current_app
 from backend.db_connection import db
-from backend.ml_models.model01 import predict
 
-# post example in products page
-
-#------------------------------------------------------------
-# Create a new Blueprint object, which is a collection of 
-# routes.
+# Create a new Blueprint object, which is a collection of routes
 ingredients = Blueprint('ingredients', __name__)
 
-
-#------------------------------------------------------------
 # Get all ingredients from the system
-
 @ingredients.route('/ingredients', methods=['GET'])
-def get_ingredients():
-    query = '''SELECT IngredientID, IngredientName, Inventory,
-                    Expiry, Price, BurnRate FROM Ingredients
-    '''
-    
-    # get a cursor object from the database
+def get_all_ingredients():
     cursor = db.get_db().cursor()
-
-    # use cursor to query the database for a list of ingredients
-    cursor.execute(query)
-
-    # fetch all the data from the cursor
-    # The cursor will return the data as a 
-    # Python Dictionary
-    theData = cursor.fetchall()
-
-    # Create a HTTP Response object and add results of the query to it
-    # after "jasonify"-ing it.
-    response = make_response(jsonify(theData))
-    # set the proper HTTP Status code of 200 (meaning all good)
-    response.status_code = 200
-    # send the response back to the client
-    return response
-
-# Get ingredients by burn rate 
-# might need to be a get by id? /id
-@ingredients.route('/ingredients/burnrate', methods=['GET'])
-def get_burn_rate_by_ing():
-    # get a cursor object from the database
-    cursor = db.get_db().cursor()
-
-    query = '''
-        SELECT IngredientName, BurnRate
+    query = ''' 
+        SELECT IngredientID, IngredientName, Inventory, Expiry, Price, BurnRate
         FROM Ingredients;
     '''
-
-    # use cursor to query the database for a list of ingredients
     cursor.execute(query)
-
-    # fetch all the data from the cursor
-    # The cursor will return the data as a 
-    # Python Dictionary
-    theData = cursor.fetchall()
-
-    # Create a HTTP Response object and add results of the query to it
-    # after "jasonify"-ing it.
-    response = make_response(jsonify(theData))
-    # set the proper HTTP Status code of 200 (meaning all good)
+    the_data = cursor.fetchall()
+    response = make_response(jsonify(the_data))
     response.status_code = 200
-    # send the response back to the client
-    return response    
-
-# Adds a new ingredient
-@ingredients.route('/ingredients', methods=['POST'])
-def add_new_ing():
-    # Collecting data from the request object
-    the_data = request.json
-    current_app.logger.info(the_data)
-
-    # Extracting the variable
-    ing_name = the_data['IngredientName']
-
-    query = f'''
-        INSERT INTO Ingredients (IngredientName)
-        VALUES ({'ing_name'})    
-    '''
-
-    current_app.logger.info(query)
-
-    # Execute the insert statment and commit the changes
-    cursor = db.get.db().cursor()
-    cursor.execute(query)
-    db.get_db().commit()
-
-    response = make_response("Successfully added ingredient")
-    response.status_code = 200
+    response.mimetype = 'application/json'
     return response
 
-# Updates the inventory of a specific ingredient, that Sally has delivered
-@ingredients.route('/ingredients', methods=['PUT'])
-def update_ing_by_id():
-    new_data = request.json
-    current_app.logger.info(new_data)
+# Add a new ingredient with a create
+@ingredients.route('/ingredients/create', methods=['POST'])
+def create_ingredient():
+    data = request.get_json()
 
-    ingredient_id = new_data['IngredientID']
-    new_inventory = new_data['Inventory']
+    name = data.get('IngredientName')
+    inventory = data.get('Inventory')
+    expiry = data.get('Expiry')
+    price = data.get('Price')
+    burn_rate = data.get('BurnRate')
 
     query = '''
-        UPDATE Ingredients
-        SET Inventory = %s
-        WHERE IngredientID = %s
+    INSERT INTO Ingredients (IngredientName, Inventory, Expiry, Price, BurnRate)
+    VALUES (%s, %s, %s, %s, %s);
     '''
 
     cursor = db.get_db().cursor()
-    cursor.execute(query, (new_inventory, ingredient_id))
+    cursor.execute(query, (name, inventory, expiry, price, burn_rate))
     db.get_db().commit()
 
-    return make_response("Succesfully updated inventory", 200)
+    return jsonify({"message": "Ingredient created successfully"}), 201
+
+
+
+
+# Update the inventory of an ingredient
+@ingredients.route('/ingredients/update-inventory/<int:item_id>', methods=['PUT'])
+def update_ing_inventory(item_id):
+    try:
+        data = request.get_json()
+        new_inventory = data.get('Inventory')
+
+        if new_inventory is None:
+            return jsonify({"error": "Missing 'Inventory' in request body"}), 400
+        if not isinstance(new_inventory, (int, float)) or new_inventory < 0:
+            return jsonify({"error": "Inventory must be a non-negative number"}), 400
+
+        cursor = db.get_db().cursor()
+        update_query = '''
+            UPDATE Ingredients
+            SET Inventory = %s
+            WHERE IngredientID = %s;
+        '''
+        cursor.execute(update_query, (new_inventory, item_id))
+        db.get_db().commit()
+
+        return jsonify({"message": "Inventory updated successfully!"}), 200
+
+    except Exception as e:
+        current_app.logger.error(f"Error Updating Inventory: {e}")
+        return jsonify({"error": "An error occurred while updating inventory."}), 500
+
+
+# Get the ingredient by ID
+@ingredients.route('/ingredients/<int:id>', methods=['GET'])
+def get_ingredient_by_id(id):
+    cursor = db.get_db().cursor()
+    query = '''
+        SELECT IngredientID, IngredientName, Inventory, Expiry, Price, BurnRate
+        FROM Ingredients
+        WHERE IngredientID = %s
+    '''
+    cursor.execute(query, (id,))
+    the_data = cursor.fetchone()
+
+    if the_data:
+        ingredient = {
+            'IngredientID': the_data[0],
+            'IngredientName': the_data[1],
+            'Inventory': the_data[2],
+            'Expiry': the_data[3],
+            'Price': the_data[4],
+            'BurnRate': the_data[5]
+        }
+        response = make_response(jsonify(ingredient))
+        response.status_code = 200
+    else:
+        response = make_response(jsonify({'error': 'Ingredient not found'}), 404)
+
+    return response
+
+# Gets the top 10 highest burn rates of ingredients
+@ingredients.route('/ingredients/burnrate/top', methods=['GET'])
+def get_top_burnrates():
+    cursor = db.get_db().cursor()
+
+    top_query = '''
+        SELECT IngredientName, BurnRate
+        FROM Ingredients
+        ORDER BY BurnRate DESC
+        LIMIT 10
+    '''
+
+    cursor.execute(top_query)
+    top_results = cursor.fetchall()
+
+    return jsonify(top_results), 200
+
+# Gets the top 10 lowest burn rates of ingredients
+@ingredients.route('/ingredients/burnrate/bottom', methods=['GET'])
+def get_bottom_burnrates():
+    cursor = db.get_db().cursor()
+
+    bottom_query = '''
+        SELECT IngredientName, BurnRate
+        FROM Ingredients
+        ORDER BY BurnRate ASC
+        LIMIT 10
+    '''
+
+    cursor.execute(bottom_query)
+    bottom_results = cursor.fetchall()
+
+    return jsonify(bottom_results), 200
