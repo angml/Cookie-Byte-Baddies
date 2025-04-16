@@ -1,60 +1,75 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Flask, Blueprint, request, jsonify, make_response
 from backend.db_connection import db
 
 employees = Blueprint('employees', __name__)
 
-# ----------------------------------------
-# GET all employees
 @employees.route('/employees', methods=['GET'])
 def get_all_employees():
-    query = '''
-        SELECT ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID
-        FROM Employee
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query)
-    rows = cursor.fetchall()
+    try:
+        cursor = db.get_db().cursor()
+        query = '''
+            SELECT ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID
+            FROM Employee
+        '''
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        data = []
+        for row in rows:
+            emp = dict(zip(column_names, row))
+            # Ensure Wage and HoursWorked are floats
+            try:
+                emp['Wage'] = float(emp['Wage']) if emp['Wage'] is not None else 0.0
+            except Exception:
+                emp['Wage'] = 0.0
+            try:
+                emp['HoursWorked'] = float(emp['HoursWorked']) if emp['HoursWorked'] is not None else 0.0
+            except Exception:
+                emp['HoursWorked'] = 0.0
+            data.append(emp)
+        response = make_response(jsonify(data))
+        response.status_code = 200
+        return response
+    except Exception as e:
+        return jsonify({"error": str(e), "data": []}), 500
 
-    column_names = [desc[0] for desc in cursor.description]
-    data = [dict(zip(column_names, row)) for row in rows]
-
-    return jsonify(data)
-
-
-# ----------------------------------------
-# INSERT a new employee
 @employees.route('/employees', methods=['POST'])
 def add_employee():
-    data = request.json
+    data = request.get_json(force=True)
     query = '''
-        INSERT INTO Employee (FirstName, LastName, Position, Wage, HoursWorked, ManagerID)
-        VALUES (%s, %s, %s, %s, %s, %s)
+        INSERT INTO Employee (ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (
-        data['FirstName'], data['LastName'], data['Position'],
-        data['Wage'], data['HoursWorked'], data['ManagerID']
-    ))
-    db.get_db().commit()
-    return make_response("Employee added!", 201)
+    try:
+        cursor.execute(query, (
+            data['ID'], data['FirstName'], data['LastName'], data['Position'],
+            float(data['Wage']), float(data['HoursWorked']), data['ManagerID']
+        ))
+        db.get_db().commit()
+        return jsonify({"message": "Employee added!"}), 201
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"error": str(e)}), 400
+    
 
-# ----------------------------------------
-# UPDATE an employee’s wage
 @employees.route('/employees/<int:id>', methods=['PUT'])
 def update_employee(id):
-    data = request.json
+    data = request.get_json(force=True)
     query = '''
         UPDATE Employee
         SET Wage = %s
         WHERE ID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (data['Wage'], id))
-    db.get_db().commit()
-    return make_response("Employee wage updated successfully.", 200)
+    try:
+        cursor.execute(query, (float(data['Wage']), id))
+        db.get_db().commit()
+        return jsonify({"message": "Employee wage updated successfully."}), 200
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"error": str(e)}), 400
 
-# ----------------------------------------
-# DELETE an employee
 @employees.route('/employees/<int:id>', methods=['DELETE'])
 def delete_employee(id):
     query = '''
@@ -62,20 +77,17 @@ def delete_employee(id):
         WHERE ID = %s
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, (id,))
-    db.get_db().commit()
-    return make_response("Employee terminated", 200)
+    try:
+        cursor.execute(query, (id,))
+        db.get_db().commit()
+        return jsonify({"message": "Employee terminated"}), 200
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"error": str(e)}), 400
 
-# ----------------------------------------
-# GET all employees by position
-@employees.route('/employees/position/<position>', methods=['GET'])
-def get_employees_by_position(position):
-    query = '''
-        SELECT ID, FirstName, LastName, Position, Wage, HoursWorked, ManagerID
-        FROM Employee
-        WHERE Position = %s
-    '''
-    cursor = db.get_db().cursor()
-    cursor.execute(query, (position,))
-    data = cursor.fetchall()
-    return make_response(jsonify(data), 200)
+
+app = Flask(__name__)
+app.register_blueprint(employees, url_prefix='/e')
+
+if __name__ == "__main__":
+    app.run(debug=True, port=4000)

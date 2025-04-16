@@ -20,31 +20,36 @@ st.write('')
 st.write('### What would you like to do today?')
 
 # Button that navigates to the Costs page
-if st.button('View and Manage: COSTS', 
+if st.button('View and Manage Costs', 
              type='primary',
              use_container_width=True):
     st.switch_page('pages/01_Costs.py')
 
 # Button that navigates to the Sales page
-if st.button('View and Manage: SALES', 
+if st.button('View and Manage Sales', 
              type='primary',
              use_container_width=True):
     st.switch_page('pages/02_Sales.py')
 
 # Button that navigates to the Employees page
-if st.button('View and Manage: EMPLOYEES',
+if st.button('View and Manage Employees',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/03_Employees.py')
 
 # Button that navigates to the Suppliers page
-if st.button('View and Manage: Suppliers',
+if st.button('View and Manage Suppliers',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/04_Suppliers.py')
 
 # Button that navigates to the Equipment page 
-if st.button('View: Equipment',
+if st.button('View and Manage Equipment',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/09_Equipment.py')
+
+if st.button('View and Manage Orders', 
+             type = 'primary', 
+             use_container_width = True):
+    st.switch_page('pages/013_Orders.py')
