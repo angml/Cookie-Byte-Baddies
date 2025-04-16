@@ -38,21 +38,13 @@ if st.button('View and Manage Employees',
     st.switch_page('pages/03_Employees.py')
 
 # Button that navigates to the Suppliers page
-<<<<<<< Updated upstream
-if st.button('View and Manage: SUPPLIERS',
-=======
 if st.button('View and Manage Suppliers',
->>>>>>> Stashed changes
              type='primary',
              use_container_width=True):
     st.switch_page('pages/04_Suppliers.py')
 
 # Button that navigates to the Equipment page 
-<<<<<<< Updated upstream
-if st.button('View and Mange: MANAGERS',
-=======
 if st.button('View and Manage Equipment',
->>>>>>> Stashed changes
              type='primary',
              use_container_width=True):
     st.switch_page('pages/09_Equipment.py')
