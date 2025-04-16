@@ -51,6 +51,7 @@ def add_employee():
     except Exception as e:
         db.get_db().rollback()
         return jsonify({"error": str(e)}), 400
+    
 
 @employees.route('/employees/<int:id>', methods=['PUT'])
 def update_employee(id):
