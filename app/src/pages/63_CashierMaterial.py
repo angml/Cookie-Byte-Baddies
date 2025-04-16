@@ -12,6 +12,30 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
+
+st.markdown("""
+    <style>
+        .stApp { background-color: #f3e8ff; }
+        .block-container { background-color: #f3e8ff; }
+        html, body, [class*="css"] { color: 2d2d2d; }
+        h1, h2, h3, h4 { color: #6a0dad; }
+        button {
+            background-color: #9b5de5 !important;
+            color: white !important;
+            border: 2px solid white !important;
+            border-radius: 6px !important;
+        }
+        .stDataFrame {
+            background-color: #ffc0cb !important;
+            border: 1px solid #ffaad4;
+            border-radius: 6px;
+            padding: 6px;  
+        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
 st.title('The Materials Page')
 
 
@@ -31,7 +55,7 @@ def get_mat_list():
 df = get_mat_list()
 
 # Display the material list
-st.subheader("Materials List")
+st.subheader("📋 Materials List")
 if not df.empty:
     st.dataframe(df)
 else:
@@ -41,7 +65,7 @@ else:
 response = requests.get('http://web-api:4000/m/materials')
 mat_items = response.json()
 
-st.write("### Update Inventory of a Material")
+st.write("### ➕ Update Inventory of a Material")
 selected_material = st.selectbox("Select Material to Update", [item['Name'] for item in mat_items])
 new_inventory = st.number_input("Enter New Inventory Number", min_value=0, step=1)
     

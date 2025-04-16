@@ -11,6 +11,30 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
+
+st.markdown("""
+    <style>
+        .stApp { background-color: #f3e8ff; }
+        .block-container { background-color: #f3e8ff; }
+        html, body, [class*="css"] { color: 2d2d2d; }
+        h1, h2, h3, h4 { color: #6a0dad; }
+        button {
+            background-color: #9b5de5 !important;
+            color: white !important;
+            border: 2px solid white !important;
+            border-radius: 6px !important;
+        }
+        .stDataFrame {
+            background-color: #ffc0cb !important;
+            border: 1px solid #ffaad4;
+            border-radius: 6px;
+            padding: 6px;  
+        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
 st.title('Ingredients Page')
 
 # Gets the ingredient list with all values but the IngredientID
@@ -29,7 +53,7 @@ def get_ing_list():
 df = get_ing_list()
 
 # Display the ingredient list
-st.subheader("Ingredients List")
+st.subheader("📋 Ingredients List")
 if not df.empty:
     st.dataframe(df)
 else:
@@ -41,7 +65,7 @@ response = requests.get('http://web-api:4000/i/ingredients')
 ing_items = response.json()
 
 
-st.write("### Update Inventory of an Ingredient")
+st.write("### ➕ Update Inventory of an Ingredient")
 selected_ingredient = st.selectbox("Select Ingredient to Update", [item['IngredientName'] for item in ing_items])
 new_inventory = st.number_input("Enter New Inventory Number", min_value=0, step=1)
     

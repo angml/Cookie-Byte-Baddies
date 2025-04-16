@@ -12,6 +12,30 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
+
+st.markdown("""
+    <style>
+        .stApp { background-color: #f3e8ff; }
+        .block-container { background-color: #f3e8ff; }
+        html, body, [class*="css"] { color: 2d2d2d; }
+        h1, h2, h3, h4 { color: #6a0dad; }
+        button {
+            background-color: #9b5de5 !important;
+            color: white !important;
+            border: 2px solid white !important;
+            border-radius: 6px !important;
+        }
+        .stDataFrame {
+            background-color: #ffc0cb !important;
+            border: 1px solid #ffaad4;
+            border-radius: 6px;
+            padding: 6px;  
+        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
 st.title('Materials Page')
 
 # Gets the Material list 
@@ -30,7 +54,7 @@ def get_mat_list():
 df = get_mat_list()
 
 # Display the material list
-st.subheader("Materials List")
+st.subheader("📋 Materials List")
 if not df.empty:
     st.dataframe(df)
 else:
@@ -39,7 +63,7 @@ else:
 
 
 # Add new Material title
-st.subheader("Add a New Material")
+st.subheader("➕ Add a New Material")
 
 # Input fields for the new matierial
 name = st.text_input("Name")
@@ -82,7 +106,7 @@ if st.button("Add Material"):
 
 
 # Makes a title for burn rate
-st.write("### Top 10 Materials with the Highest Burn Rate")
+st.write("### 📈 Top 10 Materials with the Highest Burn Rate")
 
 response = requests.get("http://web-api:4000/m/materials/burnrate/top")
 
@@ -94,14 +118,23 @@ if response.status_code == 200:
     df["BurnRate"] = pd.to_numeric(df["BurnRate"], errors="coerce")
 
     df = df.sort_values(by="BurnRate", ascending=False)
-
-    chart = alt.Chart(df).mark_bar().encode(
-        x=alt.X("BurnRate:Q", title="Burn Rate", scale=alt.Scale(domain=[0, df["BurnRate"].max()])),
+    
+    chart = alt.Chart(df).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor='gray', gridOpacity=1, gridWidth=1.5)
+        ),
         y=alt.Y("Name:N", sort='-x', title="Ingredient"),
         tooltip=["Name", "BurnRate"]
     ).properties(
         width=700,
         height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -110,7 +143,7 @@ else:
     st.error("Failed to fetch burn rate data")
 
 # Makes a title for burn rate
-st.write("### Top 10 Materials with the Lowest Burn Rate")
+st.write("### 📉 Top 10 Materials with the Lowest Burn Rate")
 
 response = requests.get("http://web-api:4000/m/materials/burnrate/bottom")
 
@@ -123,13 +156,22 @@ if response.status_code == 200:
 
     df_bottom = df_bottom.sort_values(by="BurnRate", ascending=True)
 
-    bottom_chart = alt.Chart(df_bottom).mark_bar().encode(
-        x=alt.X("BurnRate:Q", title="Burn Rate", scale=alt.Scale(domain=[0, df_bottom["BurnRate"].max()])),
+    bottom_chart = alt.Chart(df_bottom).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df_bottom["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor="gray", gridOpacity=1, gridWidth=1.5)
+        ),
         y=alt.Y("Name:N", sort='x', title="Ingredient"),
         tooltip=["Name", "BurnRate"]
     ).properties(
         width=700,
         height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
     )
 
     st.altair_chart(bottom_chart, use_container_width=True)

@@ -7,11 +7,36 @@ import requests
 
 logger = logging.getLogger(__name__)
 
+# Page config and styling
 st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title('Ingredients Page')
+st.markdown("""
+    <style>
+        .stApp { background-color: #f3e8ff; }
+        .block-container { background-color: #f3e8ff; }
+        html, body, [class*="css"] { color: 2d2d2d; }
+        h1, h2, h3, h4 { color: #6a0dad; }
+        button {
+            background-color: #9b5de5 !important;
+            color: white !important;
+            border: 2px solid white !important;
+            border-radius: 6px !important;
+        }
+        .stDataFrame {
+            background-color: #ffc0cb !important;
+            border: 1px solid #ffaad4;
+            border-radius: 6px;
+            padding: 6px;  
+        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
+# Header
+st.title('Ingredient Page')
 
 # Gets the ingredient list
 def get_ing_list():
@@ -29,14 +54,14 @@ def get_ing_list():
 df = get_ing_list()
 
 # Display the ingredient list
-st.subheader("Ingredients List")
+st.subheader("📋 Ingredient List")
 if not df.empty:
     st.dataframe(df)
 else:
     st.write("No ingredients available.")
 
 # Add new Ingredient title
-st.subheader("Add a New Ingredient")
+st.subheader("➕ Add a New Ingredient")
 
 # Input fields for the new ingredient
 name = st.text_input("Ingredient Name")

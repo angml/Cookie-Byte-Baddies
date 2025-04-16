@@ -12,6 +12,30 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
+
+st.markdown("""
+    <style>
+        .stApp { background-color: #f3e8ff; }
+        .block-container { background-color: #f3e8ff; }
+        html, body, [class*="css"] { color: 2d2d2d; }
+        h1, h2, h3, h4 { color: #6a0dad; }
+        button {
+            background-color: #9b5de5 !important;
+            color: white !important;
+            border: 2px solid white !important;
+            border-radius: 6px !important;
+        }
+        .stDataFrame {
+            background-color: #ffc0cb !important;
+            border: 1px solid #ffaad4;
+            border-radius: 6px;
+            padding: 6px;  
+        }
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+    </style>
+""", unsafe_allow_html=True)
+
 st.title('Ingredients Page')
 
 # Gets the ingredient list
@@ -30,14 +54,14 @@ def get_ing_list():
 df = get_ing_list()
 
 # Display the ingredient list
-st.subheader("Ingredients List")
+st.subheader("📋 Ingredients List")
 if not df.empty:
     st.dataframe(df)
 else:
     st.write("No ingredients available.")
 
 
-st.write("### Top 10 Ingredients with the Highest Burn Rate")
+st.write("### 📈 Top 10 Ingredients with the Highest Burn Rate")
 
 response = requests.get("http://web-api:4000/i/ingredients/burnrate/top")
 
@@ -50,13 +74,22 @@ if response.status_code == 200:
 
     df = df.sort_values(by="BurnRate", ascending=False)
 
-    chart = alt.Chart(df).mark_bar().encode(
-        x=alt.X("BurnRate:Q", title="Burn Rate", scale=alt.Scale(domain=[0, df["BurnRate"].max()])),
+    chart = alt.Chart(df).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor='gray', gridOpacity=1, gridWidth=1.5)
+        ),
         y=alt.Y("IngredientName:N", sort='-x', title="Ingredient"),
         tooltip=["IngredientName", "BurnRate"]
     ).properties(
         width=700,
         height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -65,7 +98,7 @@ else:
     st.error("Failed to fetch burn rate data")
 
 
-st.write("### Top 10 Ingredients with the Lowest Burn Rate")
+st.write("### 📉 Top 10 Ingredients with the Lowest Burn Rate")
 
 response = requests.get("http://web-api:4000/i/ingredients/burnrate/bottom")
 
@@ -78,13 +111,22 @@ if response.status_code == 200:
 
     df_bottom = df_bottom.sort_values(by="BurnRate", ascending=True)
 
-    bottom_chart = alt.Chart(df_bottom).mark_bar().encode(
-        x=alt.X("BurnRate:Q", title="Burn Rate", scale=alt.Scale(domain=[0, df_bottom["BurnRate"].max()])),
+    bottom_chart = alt.Chart(df_bottom).mark_bar(color="#6a0dad").encode(
+        x=alt.X(
+            "BurnRate:Q", 
+            title="Burn Rate", 
+            scale=alt.Scale(domain=[0, df_bottom["BurnRate"].max()]),
+            axis=alt.Axis(grid=True, gridColor='gray', gridOpacity=1, gridWidth=1.5)
+        ),
         y=alt.Y("IngredientName:N", sort='x', title="Ingredient"),
         tooltip=["IngredientName", "BurnRate"]
     ).properties(
         width=700,
         height=400,
+    ).configure_view(
+        fill="#f3e8ff"
+    ).configure(
+        background="#f3e8ff"
     )
 
     st.altair_chart(bottom_chart, use_container_width=True)
@@ -99,7 +141,7 @@ response = requests.get('http://web-api:4000/i/ingredients')
 ing_items = response.json()
 
 
-st.write("### Update Inventory of an Ingredient")
+st.write("### ➕ Update Inventory of an Ingredient")
 selected_ingredient = st.selectbox("Select Ingredient to Update", [item['IngredientName'] for item in ing_items])
 new_inventory = st.number_input("Enter New Inventory Number", min_value=0, step=1)
 
