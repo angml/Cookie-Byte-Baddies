@@ -25,7 +25,6 @@ def get_all_suppliers():
         return jsonify({"error": str(e), "data": []}), 500
     
 
-# Route to add a new supplier
 @suppliers.route('/s/suppliers', methods=['POST'])
 def add_supplier():
     try:
