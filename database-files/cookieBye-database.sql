@@ -34,7 +34,8 @@ CREATE TABLE Manager
 CREATE TABLE Supplier
 (
     ID    INT UNIQUE PRIMARY KEY,
-    Name  VARCHAR(100),
+    CompanyName  VARCHAR(100),
+    ContactPerson VARCHAR(100),
     Phone VARCHAR(20) UNIQUE,
     Email VARCHAR(100) UNIQUE
 );
@@ -116,7 +117,7 @@ CREATE TABLE OrderQuantity
 -- Table: Employee
 CREATE TABLE Employee
 (
-    ID          INT UNIQUE PRIMARY KEY,
+    ID          INT UNIQUE PRIMARY KEY AUTO_INCREMENT,
     FirstName   VARCHAR(100),
     LastName    VARCHAR(100),
     Position    VARCHAR(50),
@@ -135,6 +136,7 @@ CREATE TABLE Costs
     PaymentDate   DATETIME,
     PaymentAmount DECIMAL(10, 2),
     ManagerID     INT UNIQUE,                            -- Foreign Key to Manager (who reviews/receives costs)
+    SupplyOrderID INT,                         -- Foreign Key to SupplyOrder (if applicable)
     CONSTRAINT fk_8 FOREIGN KEY (`ManagerID`) REFERENCES Manager (`ID`)
         ON UPDATE RESTRICT ON DELETE SET NULL
 );

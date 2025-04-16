@@ -15,10 +15,10 @@ INSERT INTO Manager(ID, FirstName, Phone, Email, Revenue, LastName)
         (1, 'Mandy','508-555-2345', 'mandymanager@siphappens.com', 120000.00, 'Manager'),
         (2, 'Ethan', '978-555-3456', 'ethan.brown@siphappens.com', 105000.00, 'Brown');
 
-INSERT INTO Supplier(ID, Name, Phone, Email)
+INSERT INTO Supplier(ID, CompanyName, ContactPerson, Phone, Email)
     VALUES
-        (1, 'Sanchez & Sons Sweet Deliveries', '617-555-1234', 'deliveries@sancheznsons.com'),
-        (2, 'Baker’s Best', '413-555-4567', 'orders@bakersbest.com');
+        (1, 'Sanchez & Sons Sweet Deliveries', 'Sally Supplier','617-555-1234', 'deliveries@sancheznsons.com'),
+        (2, 'Baker’s Best', 'Bernie Other','413-555-4567', 'orders@bakersbest.com');
 
 INSERT INTO SupplyOrder(ID, SupplierID, ManagerID, OrderTotal, OrderQuantity, DateOrdered, DeliveryDate)
     VALUES
@@ -79,26 +79,17 @@ INSERT INTO Sales(SalesID, Date, TotalSales)
         (2, '2025-03-31', 420.50),
         (3, '2025-03-30', 380.00);
 
+
+
 INSERT INTO TransactionDetails(SalesID, MenuItemID, MenuItemQuantity, Date)
-<<<<<<< HEAD
 VALUES (1, 1, 3, '2025-04-01 10:00:00'),
        (2, 2, 2, '2025-04-01 10:00:00'),
-       (3, 3, 4, '2025-03-31 10:00:00'),
-       (4, 4, 1, '2025-03-31 10:00:00'),
-       (6, 8, 8, '2025-03-30 10:00:00');
-
-SELECT * FROM SupplyOrder;
-=======
-     VALUES
-        (1, 1, 3, '2025-04-01'),
-        (1, 2, 2, '2025-04-01'),
-        (2, 3, 4, '2025-03-31'),
-        (2, 4, 1, '2025-03-31'),
-        (3, 1, 2, '2025-03-30'),
-        (3, 8, 3, '2025-03-30');
+       (3, 3, 4, '2025-03-31 10:00:00');
 
 
 
 
 
->>>>>>> testrun
+
+
+

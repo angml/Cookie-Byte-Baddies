@@ -12,21 +12,7 @@ def get_all_employees():
             FROM Employee
         '''
         cursor.execute(query)
-        rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
-        data = []
-        for row in rows:
-            emp = dict(zip(column_names, row))
-            # Ensure Wage and HoursWorked are floats
-            try:
-                emp['Wage'] = float(emp['Wage']) if emp['Wage'] is not None else 0.0
-            except Exception:
-                emp['Wage'] = 0.0
-            try:
-                emp['HoursWorked'] = float(emp['HoursWorked']) if emp['HoursWorked'] is not None else 0.0
-            except Exception:
-                emp['HoursWorked'] = 0.0
-            data.append(emp)
+        data = cursor.fetchall()
         response = make_response(jsonify(data))
         response.status_code = 200
         return response
@@ -44,7 +30,7 @@ def add_employee():
     try:
         cursor.execute(query, (
             data['ID'], data['FirstName'], data['LastName'], data['Position'],
-            float(data['Wage']), float(data['HoursWorked']), data['ManagerID']
+            float(data['Wage']), float(data['HoursWorked']), 1
         ))
         db.get_db().commit()
         return jsonify({"message": "Employee added!"}), 201

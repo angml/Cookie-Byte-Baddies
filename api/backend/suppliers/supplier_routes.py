@@ -9,15 +9,10 @@ def get_all_suppliers():
     try:
         cursor = db.get_db().cursor()
         query = '''
-            SELECT ID, Name, Phone, Email FROM Supplier
+            SELECT ID, CompanyName, ContactPerson, Phone, Email FROM Supplier
         '''
         cursor.execute(query)
-        rows = cursor.fetchall()
-        column_names = [desc[0] for desc in cursor.description]
-        data = []
-        for row in rows:
-            sup = dict(zip(column_names, row))
-            data.append(sup)
+        data = cursor.fetchall()
         response = make_response(jsonify(data))
         response.status_code = 200
         return response
@@ -29,14 +24,15 @@ def get_all_suppliers():
 def add_supplier():
     try:
         data = request.get_json()
-        name = data.get('Name')
+        name = data.get('CompanyName')
+        person = data.get('ContactPerson')
         phone = data.get('Phone')
         email = data.get('Email')
 
         cursor = mysql.connection.cursor()
         cursor.execute(
-            "INSERT INTO Supplier (Name, Phone, Email) VALUES (%s, %s, %s)",
-            (name, phone, email)
+            "INSERT INTO Supplier (CompanyName, ContactPerson, Phone, Email) VALUES (%s, %s, %s)",
+            (name, person, phone, email)
         )
         mysql.connection.commit()
         return jsonify({'message': 'Supplier added successfully'}), 201
@@ -64,13 +60,14 @@ def update_supplier(supplier_id):
     try:
         data = request.get_json()
         name = data.get('Name')
+        person = data.get('ContactPerson')
         phone = data.get('Phone')
         email = data.get('Email')
 
         cursor = mysql.connection.cursor()
         cursor.execute(
-            "UPDATE Supplier SET Name = %s, Phone = %s, Email = %s WHERE ID = %s",
-            (name, phone, email, supplier_id)
+            "UPDATE Supplier SET Name = %s, ContactPerson = %s, Phone = %s, Email = %s WHERE ID = %s",
+            (name, person, phone, email, supplier_id)
         )
         mysql.connection.commit()
         if cursor.rowcount == 0:
