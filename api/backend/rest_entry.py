@@ -9,6 +9,7 @@ from backend.suppliers.supplier_routes import suppliers
 from backend.menu_items.menuItem_routes import menuItems
 from backend.supply_orders.supplyOrder_routes import supplyOrders
 from backend.ingredients.ingredient_routes import ingredients
+from backend.materials.material_routes import materials
 from backend.cost_routes.cost_routes import costs
 
 import os 
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(suppliers,   url_prefix='/s')
     app.register_blueprint(supplyOrders, url_prefix='/so')
     app.register_blueprint(ingredients, url_prefix='/i')
+    app.register_blueprint(materials, url_prefix='/m')
     app.register_blueprint(costs, url_prefix='/costs')
 
     # Don't forget to return the app object

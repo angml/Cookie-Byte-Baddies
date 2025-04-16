@@ -23,3 +23,8 @@ if st.button('Supplies',
              type='primary',
              use_container_width=True):
   st.switch_page('pages/21_ML_Model_Mgmt.py')
+
+if st.button('Materials', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/23_ViewMaterials.py')

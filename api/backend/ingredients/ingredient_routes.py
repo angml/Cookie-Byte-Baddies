@@ -19,7 +19,7 @@ def get_all_ingredients():
     response.mimetype = 'application/json'
     return response
 
-# Add a new ingredient (this is the `/ingredients/create` endpoint)
+# Add a new ingredient with a create
 @ingredients.route('/ingredients/create', methods=['POST'])
 def create_ingredient():
     data = request.get_json()
@@ -30,7 +30,6 @@ def create_ingredient():
     price = data.get('Price')
     burn_rate = data.get('BurnRate')
 
-    # Ensure the ingredients table is named correctly (Ingredients)
     query = '''
     INSERT INTO Ingredients (IngredientName, Inventory, Expiry, Price, BurnRate)
     VALUES (%s, %s, %s, %s, %s);
@@ -73,8 +72,6 @@ def update_ing_inventory(item_id):
         return jsonify({"error": "An error occurred while updating inventory."}), 500
 
 
-# -------------------------------------------------------------------------------------------------------------
-
 # Get the ingredient by ID
 @ingredients.route('/ingredients/<int:id>', methods=['GET'])
 def get_ingredient_by_id(id):
@@ -103,8 +100,7 @@ def get_ingredient_by_id(id):
 
     return response
 
-# -------------------------------------------------------------------------------------------------------------
-
+# Gets the top 10 highest burn rates of ingredients
 @ingredients.route('/ingredients/burnrate/top', methods=['GET'])
 def get_top_burnrates():
     cursor = db.get_db().cursor()
@@ -121,11 +117,7 @@ def get_top_burnrates():
 
     return jsonify(top_results), 200
 
-
-
-#----------------------------------------------------------------------------------------------------------------
-
-
+# Gets the top 10 lowest burn rates of ingredients
 @ingredients.route('/ingredients/burnrate/bottom', methods=['GET'])
 def get_bottom_burnrates():
     cursor = db.get_db().cursor()

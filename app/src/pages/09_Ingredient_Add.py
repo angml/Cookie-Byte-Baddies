@@ -13,7 +13,7 @@ SideBarLinks()
 
 st.title('Ingredients Page')
 
-# Gets the ingredient list with all values but the IngredientID
+# Gets the ingredient list
 def get_ing_list():
     try:
         response = requests.get('http://web-api:4000/i/ingredients')
@@ -51,7 +51,7 @@ if st.button("Add Ingredient"):
     if not name or price is None or inventory is None or not expiry or burn_rate is None:
         st.error("Please fill out all fields before submitting. Thank you!")
     # Must have a real price and burn rate greater than zero. We are allowed to have a 0 for inventory
-    # to represent when we run out of an item.
+    # to represent when we run out of an item :)
     elif price <= 0.0 or burn_rate <= 0:
         st.error("Please enter a valid price or burn rate number (greater than 0). Thank you!")
     else:
@@ -64,10 +64,10 @@ if st.button("Add Ingredient"):
             "BurnRate" : burn_rate
         }
 
-        # Make POST request to the API to create the ingredient
+        # Makes a POST request to the API to create the ingredient
         response = requests.post("http://web-api:4000/i/ingredients/create", json=item_data)
         
-        # Handle success or error response
+        # Handles either the success or error response
         if response.status_code == 201:
             st.success(f"New ingredient '{name}' added successfully!")
             # refreshes the page automatically!

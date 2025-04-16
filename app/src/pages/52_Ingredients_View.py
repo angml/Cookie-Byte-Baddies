@@ -14,7 +14,7 @@ SideBarLinks()
 
 st.title('Ingredients Page')
 
-# Gets the ingredient list with all values but the IngredientID
+# Gets the ingredient list
 def get_ing_list():
     try:
         response = requests.get('http://web-api:4000/i/ingredients')
@@ -37,17 +37,11 @@ else:
     st.write("No ingredients available.")
 
 
-
-
-
-
-
-
 st.write("### Top 10 Ingredients with the Highest Burn Rate")
 
 response = requests.get("http://web-api:4000/i/ingredients/burnrate/top")
 
-
+# Makes a bar chart of high burn rates
 if response.status_code == 200:
     data = response.json()
     df = pd.DataFrame(data)
@@ -63,7 +57,6 @@ if response.status_code == 200:
     ).properties(
         width=700,
         height=400,
-        #title="Top 10 Ingredients by Burn Rate"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -72,24 +65,11 @@ else:
     st.error("Failed to fetch burn rate data")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 st.write("### Top 10 Ingredients with the Lowest Burn Rate")
 
 response = requests.get("http://web-api:4000/i/ingredients/burnrate/bottom")
 
-
+# Makes a bar chart with the lowest burn rate
 if response.status_code == 200:
     data = response.json()
     df_bottom = pd.DataFrame(data)
@@ -122,7 +102,9 @@ ing_items = response.json()
 st.write("### Update Inventory of an Ingredient")
 selected_ingredient = st.selectbox("Select Ingredient to Update", [item['IngredientName'] for item in ing_items])
 new_inventory = st.number_input("Enter New Inventory Number", min_value=0, step=1)
-    
+
+
+# Updates the inventory of a selected ingredient
 if st.button("Update Inventory"):
     # Get the selected item's ID 
     inv_to_update = next(item for item in ing_items if item['IngredientName'] == selected_ingredient)
