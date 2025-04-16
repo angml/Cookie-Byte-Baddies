@@ -68,7 +68,7 @@ def update_equipment():
     data = request.json
     current_app.logger.info(data)
 
-    #variables
+    #extract data
     new_name = data["Name"]
     new_price = data["Price"]
     new_lifespan = data["Lifespan"]
