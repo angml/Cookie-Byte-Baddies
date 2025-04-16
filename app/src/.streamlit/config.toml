@@ -22,9 +22,3 @@ font="monospace"
 headless = true
 runOnSave = true
 fileWatcherType = "poll"
-
-
-[server]
-headless = true
-runOnSave = true
-fileWatcherType = "poll"
