@@ -38,13 +38,13 @@ if st.button('View and Manage: EMPLOYEES',
     st.switch_page('pages/03_Employees.py')
 
 # Button that navigates to the Suppliers page
-if st.button('View and Manage: Suppliers',
+if st.button('View and Manage: SUPPLIERS',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/04_Suppliers.py')
 
 # Button that navigates to the Equipment page 
-if st.button('View: Equipment',
+if st.button('View and Mange: MANAGERS',
              type='primary',
              use_container_width=True):
     st.switch_page('pages/09_Equipment.py')
