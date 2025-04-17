@@ -22,22 +22,22 @@ def get_all_suppliers():
 
 @suppliers.route('/s/suppliers', methods=['POST'])
 def add_supplier():
+    data = request.get_json(force = True)
+    query = '''
+        INSERT INTO Supplier (ID, CompanyName, ContactPerson, Phone, Email) VALUES (%s, %s, %s, %s, %s)
+    '''
+    cursor = db.get_db().cursor()
     try:
-        data = request.get_json()
-        name = data.get('CompanyName')
-        person = data.get('ContactPerson')
-        phone = data.get('Phone')
-        email = data.get('Email')
-
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            "INSERT INTO Supplier (CompanyName, ContactPerson, Phone, Email) VALUES (%s, %s, %s)",
-            (name, person, phone, email)
-        )
-        mysql.connection.commit()
-        return jsonify({'message': 'Supplier added successfully'}), 201
+        cursor.execute(query, (
+            data['ID'], data['CompanyName'], data['ContactPerson'], data['Phone'], data['Email']
+        ))
+        db.get_db().commit()
+        return jsonify({"message": "Supplier addded!"}), 201
     except Exception as e:
-        return jsonify({'error': str(e)})
+        db.get_db().rollback()
+        return jsonify({"error": str(e)})
+
+
 
 # Route to delete a supplier by ID
 @suppliers.route('/s/suppliers/<int:supplier_id>', methods=['DELETE'])

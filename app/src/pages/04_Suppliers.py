@@ -82,7 +82,9 @@ else:
 
 st.markdown("---")
 st.subheader("➕ Add New Supplier")
+
 with st.form("add_supplier_form"):
+    supplier_id = st.number_input("Supplier ID", min_value = 1, step = 1)
     company_name = st.text_input("Company Name")
     contact_person = st.text_input("Contact Person")
     phone = st.text_input("Phone Number")
@@ -90,14 +92,24 @@ with st.form("add_supplier_form"):
     submitted = st.form_submit_button("Add Supplier")
 
     if submitted:
-        if company_name and contact_person and phone and email:
-            if add_supplier(company_name, contact_person, phone, email):
+        if all([company_name, contact_person, phone, email]):
+            new_supplier = {
+                "ID": supplier_id,
+                "CompanyName": company_name,
+                "ContactPerson": contact_person,
+                "Phone": phone,
+                "Email": email
+            }
+            response = requests.post(BASE_URL, json=new_supplier)
+            print(response.status_code)
+            if response.status_code == 201:
                 st.success("Supplier added successfully!")
                 st.experimental_rerun()
             else:
                 st.error("Failed to add supplier.")
         else:
             st.error("Please fill in all fields.")
+
 
 st.markdown("---")
 st.subheader("🔧 Manage Suppliers")
@@ -106,23 +118,23 @@ for idx, row in suppliers_df.iterrows():
     with st.expander(f"{row['Company Name']} (ID: {row['Supplier ID']})"):
         col1, col2 = st.columns(2)
 
-        with col1:
-            new_name = st.text_input("New Company Name", value=row['Company Name'], key=f"name_{idx}")
-            new_person = st.text_input("New Contact Person", value = row['Contact Person'], key=f"person_{idx}")
-            new_email = st.text_input("New Email", value=row['Email Address'], key=f"email_{idx}")
-            new_phone = st.text_input("New Phone Number", value=row['Phone Number'], key=f"phone_{idx}")
+        new_name = st.text_input("New Company Name", value=row['Company Name'], key=f"name_{idx}")
+        new_person = st.text_input("New Contact Person", value = row['Contact Person'], key=f"person_{idx}")
+        new_email = st.text_input("New Email", value=row['Email Address'], key=f"email_{idx}")
+        new_phone = st.text_input("New Phone Number", value=row['Phone Number'], key=f"phone_{idx}")
 
-            if st.button("Update Supplier", key=f"update_{idx}"):
-                if update_supplier(row['Supplier ID'], new_name, new_person, new_email, new_phone):
-                    st.success("Supplier updated successfully!")
-                    st.experimental_rerun()
-                else:
-                    st.error("Failed to update supplier.")
+        if st.button("Update Supplier", key=f"update_{idx}"):
+            if update_supplier(row['Supplier ID'], new_name, new_person, new_email, new_phone):
+                st.success("Supplier updated successfully!")
+                st.experimental_rerun()
+            else:
+                st.error("Failed to update supplier.")
 
-        with col2:
-            if st.button("Delete Supplier", key=f"delete_{idx}"):
-                if delete_supplier(row['Supplier ID']):
-                    st.success("Supplier deleted successfully!")
-                    st.experimental_rerun()
-                else:
-                    st.error("Failed to delete supplier.")
+    with col2:
+        if st.button("Delete Supplier", key=f"delete_{idx}"):
+            if delete_supplier(row['Supplier ID']):
+                st.success("Supplier deleted successfully!")
+                st.experimental_rerun()
+            else:
+                st.error("Failed to delete supplier.")
+

@@ -40,6 +40,7 @@ CREATE TABLE Supplier
     Email VARCHAR(100) UNIQUE
 );
 
+
 -- Table: SupplyOrder
 CREATE TABLE SupplyOrder
 (
