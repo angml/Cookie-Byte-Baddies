@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS CookieByte;
+#DROP DATABASE IF EXISTS CookieByte;
 # Creating a new database called CookieByte
 CREATE DATABASE CookieByte;
 # Set CookieByte as the current database
@@ -97,9 +97,7 @@ ALTER TABLE Equipment MODIFY ID INT AUTO_INCREMENT;
 -- This table represents the breakdown of a supply order into quantities for ingredients,
 -- materials, and equipment.
 CREATE TABLE OrderQuantity
-(
-    OrderQuantityID    INT UNIQUE PRIMARY KEY AUTO_INCREMENT,
-    OrderID            INT,
+(   OrderID            INT,
     IngredientID       INT UNIQUE DEFAULT NULL,
     MaterialsID        INT UNIQUE DEFAULT NULL,
     EquipmentID        INT UNIQUE DEFAULT NULL,
@@ -137,13 +135,8 @@ CREATE TABLE Costs
     Type          VARCHAR(50),
     PaymentDate   DATETIME,
     PaymentAmount DECIMAL(10, 2),
-<<<<<<< Updated upstream
-    ManagerID     INT UNIQUE,                            -- Foreign Key to Manager (who reviews/receives costs)
-    SupplyOrderID INT,                         -- Foreign Key to SupplyOrder (if applicable)
-=======
-    ManagerID     INT UNIQUE, 
-    SupplyOrderID INT,                            -- Foreign Key to Manager (who reviews/receives costs)
->>>>>>> Stashed changes
+    ManagerID     INT,           -- Foreign Key to Manager (who reviews/receives costs)
+    SupplyOrderID INT,             -- Foreign Key to SupplyOrder (if applicable)
     CONSTRAINT fk_8 FOREIGN KEY (`ManagerID`) REFERENCES Manager (`ID`)
         ON UPDATE RESTRICT ON DELETE SET NULL
 );
@@ -160,11 +153,11 @@ CREATE TABLE Sales
 -- This is a weak entity that details the items in a sale.
 CREATE TABLE TransactionDetails
 (
-    SalesID          INT UNIQUE NOT NULL, -- Foreign Key to Sales
+    SalesID          INT NOT NULL, -- Foreign Key to Sales
     MenuItemID       INT  NOT NULL, -- Foreign Key to MenuItem
     MenuItemQuantity INT        NOT NULL,
     Date             DATETIME   NOT NULL,
-    EmployeeID       INT UNIQUE,
+    EmployeeID       INT,
     PRIMARY KEY (SalesID, MenuItemID),
     CONSTRAINT fk_9 FOREIGN KEY (`SalesID`)
         REFERENCES Sales (`SalesID`)
@@ -179,3 +172,4 @@ CREATE TABLE TransactionDetails
         ON UPDATE RESTRICT
         ON DELETE SET NULL
 );
+

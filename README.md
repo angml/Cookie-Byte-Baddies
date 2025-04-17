@@ -16,6 +16,8 @@ Our team members and Github Usernames:
 - **Database:** MySQL (via Docker)
 - **Containerization:** Docker & Docker Compose
 
+Our first client is 'Sip Happens,' a cafe that is utilizing our CookieByte product. 
+
 ---
 
 ## Getting Started
@@ -69,4 +71,4 @@ source CookieByte-database.sql;
 
 source CookieByte-data.sql;
 
-
+You can explore our data-driven application at http://localhost:8501 !

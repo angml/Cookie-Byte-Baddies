@@ -15,7 +15,7 @@ orders = Blueprint('Orders', __name__)
 @orders.route('/orders', methods=['GET'])
 def get_manager_orders():
     query = '''
-        SELECT os.ID, s.Name, os.OrderQuantity, os.OrderTotal, os.DateOrdered, os.DeliveryDate
+        SELECT os.ID, s.CompanyName, os.OrderQuantity, os.OrderTotal, os.DateOrdered, os.DeliveryDate
         FROM SupplyOrder os JOIN Supplier s ON s.ID = os.SupplierID;
     '''
     # get a cursor object from the database
@@ -41,7 +41,7 @@ def add_new_orders():
     data = request.json
 
     #extracting data
-    supplier_name = data["SupplierName"]
+    supplier_name = data["CompanyName"]
     manager_fname = data["ManagerFirstName"]
     manager_lname = data["ManagerLastName"]
     total = data["OrderTotal"]
@@ -59,7 +59,7 @@ def add_new_orders():
     manager_id = manager_row['ID']
 
     # look up supplier id based on name
-    cursor.execute("SELECT ID FROM Supplier WHERE Name = %s", (supplier_name,))
+    cursor.execute("SELECT ID FROM Supplier WHERE CompanyName = %s", (supplier_name,))
     supplier_row = cursor.fetchone()
     if not supplier_row:
         return jsonify({"error": "Supplier not found"}), 400
@@ -84,7 +84,7 @@ def update_deliverystatus():
     data = request.json
     
     #extracting data
-    supplier_name = data["SupplierName"]
+    supplier_name = data["CompanyName"]
     new_date = data["DeliveryDate"]
     new_status = data["DeliveryStatus"]
     id = data["OrderID"]
@@ -92,7 +92,7 @@ def update_deliverystatus():
     cursor = db.get_db().cursor()
 
      # look up supplier id based on name
-    cursor.execute("SELECT ID FROM Supplier WHERE Name = %s", (supplier_name,))
+    cursor.execute("SELECT ID FROM Supplier WHERE CompanyName = %s", (supplier_name,))
     supplier_row = cursor.fetchone()
     if not supplier_row:
         return jsonify({"error": "Supplier not found"}), 400
@@ -124,7 +124,7 @@ def get_order_detail(order_id):
             LEFT OUTER JOIN Materials m ON m.ID = oq.MaterialsID
             LEFT OUTER JOIN Ingredients i ON i.IngredientID = oq.IngredientID
             JOIN Supplier s ON so.SupplierID = s.ID
-            WHERE s.Name = %s AND so.ID = %s;
+            WHERE s.CompanyName = %s AND so.ID = %s;
             '''
     cursor = db.get_db().cursor()
     cursor.execute(query,('Sanchez & Sons Sweet Deliveries', order_id))
