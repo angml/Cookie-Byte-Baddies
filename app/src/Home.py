@@ -27,11 +27,15 @@ SideBarLinks(show_home=True)
 
 # --- Hero Section ---
 st.markdown("""
-    <div style='text-align: center; padding: 3rem 1rem; background: linear-gradient(90deg, #1b0b6e 0%, #9985ff 100%); border-radius: 15px;'>
-        <h1 style='font-size: 3rem; margin-bottom: 0.5rem; color: white;'>🍪 CookieByte</h1>
-        <h3 style='margin-top: 0; color: white;'>Where Cafes Run Smoothly</h3>
-    </div>
+    <a href="https://i1.rgstatic.net/ii/profile.image/278414339657728-1443390559016_Q128/Mark-Fontenot.jpg" 
+    style="text-decoration: none;">
+        <div style='text-align: center; padding: 3rem 1rem; background: linear-gradient(90deg, #1b0b6e 0%, #9985ff 100%); border-radius: 15px;'>
+            <h1 style='font-size: 3rem; margin-bottom: 0.5rem; color: white;'>🍪 CookieByte</h1>
+            <h3 style='margin-top: 0; color: white;'>Where Cafes Run Smoothly</h3>
+        </div>
+    </a>
 """, unsafe_allow_html=True)
+
 
 st.write("## 👋 Hi there!")
 st.markdown("### Choose a role to log in as:")

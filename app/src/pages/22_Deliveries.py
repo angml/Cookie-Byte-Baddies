@@ -75,6 +75,7 @@ df = df.rename(columns={
     "DeliveryDate": "Delivery Date",
     "Delivered": "Status"})
 
+
 df["Status"] = df["Status"].map({1: "Yes", 0: "No"})
 df = df[["Status","Order ID","Order Quantity","Delivery Date"]]
 st.dataframe(df)
