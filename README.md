@@ -1,6 +1,6 @@
-# 🍪 CookieByte Baddies — Cafe Management System
+# 🍪 CookieByte — Cafe Management System
 
-Welcome to **CookieByte Baddies**, a full-stack cafe management platform designed for tracking inventory, sales, employee management, costs, and more using a microservices architecture with Docker, MySQL, Flask, and Streamlit.
+Welcome to **CookieByte**, a full-stack cafe management platform designed for tracking inventory, sales, employee management, costs, and more using a microservices architecture with Docker, MySQL, Flask, and Streamlit.
 
 ## 📦 Tech Stack
 
