@@ -141,12 +141,13 @@ def get_supplier_orders():
         SELECT so.ID, so.OrderQuantity, so.DeliveryDate, so.Delivered
         FROM SupplyOrder so JOIN Supplier s 
         ON so.SupplierID = s.ID
-        WHERE s.Name = %s;
+        WHERE s.CompanyName = %s;
     '''
     cursor = db.get_db().cursor()
-    cursor.execute(query, ("Sanchez & Sons Sweet Deliveries",))
+    cursor.execute(query, ("Sanchez & Sons Sweet Deliveries"))
     theData = cursor.fetchall()
     response = make_response(jsonify(theData))
+    print(response)
     response.status_code = 200
     return response
 
