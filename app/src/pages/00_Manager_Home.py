@@ -54,12 +54,12 @@ if st.button('View and Manage Orders',
              use_container_width = True):
     st.switch_page('pages/013_Orders.py')
 
-if st.button('View and Add: Ingredients',
+if st.button('View and Add Ingredients',
             type = 'primary',
             use_container_width = True):
   st.switch_page('pages/09_Ingredient_Add.py')
 
-if st.button('View and Add: Materials',
+if st.button('View and Add Materials',
             type = 'primary',
             use_container_width = True):
   st.switch_page('pages/010_EditMaterials.py')
