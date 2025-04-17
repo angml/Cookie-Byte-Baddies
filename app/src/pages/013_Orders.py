@@ -67,7 +67,7 @@ df = fetch_orders()
 #rename columns
 df = df.rename(columns={
     "ID": "Order ID",
-    "Name": "Supplier",
+    "CompanyName": "Supplier",
     "OrderQuantity": "Order Quantity",
     "OrderTotal": "Order Total",
     "DateOrdered": "Order Date",
