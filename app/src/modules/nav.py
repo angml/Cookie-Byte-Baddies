@@ -21,6 +21,25 @@ def ManagerPageNav():
     st.sidebar.page_link(
         "pages/02_Sales.py", label="Management Sales Page", icon="🧾"
     )
+    st.sidebar.page_link(
+        "pages/03_Employees.py", label="Employees Page", icon="💁🏾‍♂️"
+    )
+    st.sidebar.page_link(
+        "pages/04_Suppliers.py", label="Suppliers Page", icon="🚛"
+    )
+    st.sidebar.page_link(
+        "pages/09_Equipment.py", label="Equipment Page", icon="🥄"
+    )
+    st.sidebar.page_link(
+        "pages/013_Orders.py", label="Orders Page", icon="📦"
+    )
+    st.sidebar.page_link(
+        "pages/09_Ingredient_Add.py", label="Ingredients Page", icon="🧈"
+    )
+    st.sidebar.page_link(
+        "pages/010_EditMaterials.py", label="Materials Page", icon="🥣"
+    )
+    
     
 #### ------------------------ Customer Role ------------------------
 def CustomerHomeNav():
@@ -34,7 +53,13 @@ def BakerHomeNav():
     st.sidebar.page_link("pages/50_Baker_Home.py", label="Baker Home", icon="👩🏿‍🍳")
     
 def BakerStockNav():
-    st.sidebar.page_link("pages/51_Baker_MenuItem_Stock.py", label="Stock Tracker", icon="📈")
+    st.sidebar.page_link("pages/51_Baker_MenuItems_Stock.py", label="Stock Tracker", icon="📈")
+    
+def BakerIngredientsNav():
+    st.sidebar.page_link("pages/52_Ingredients_View.py", label="Ingredient Inventory", icon="🍫")
+    
+def BakerMaterialsNav():
+    st.sidebar.page_link("pages/53_BakerMaterial.py", label="Material Inventory", icon="🥣")
     
 #### ------------------------ Cashier Role ------------------------
 def CashierHomeNav():
@@ -42,6 +67,26 @@ def CashierHomeNav():
     
 def CashierStockNav():
     st.sidebar.page_link("pages/61_Cashier_MenuItem_Stock.py", label="Stock Tracker", icon="📈")
+    
+def CashierIngredientsNav():
+    st.sidebar.page_link("pages/62_Cashier_Ingredient.py", label="Ingredient Inventory", icon="🍫")
+    
+def CashierMaterialsNav():
+    st.sidebar.page_link("pages/63_CashierMaterial.py", label="Material Inventory", icon="🥣")
+    
+#### ------------------------ Supplier Role ------------------------
+def SupplierHomeNav():
+    st.sidebar.page_link("pages/20_Supplier_Home.py", label="Supplier Home", icon="🚛")
+    
+def SupplierIngredientsNav():
+    st.sidebar.page_link("pages/21_Ingredients.py", label="Ingredients Page", icon="🧈")
+    
+def SupplierDeliveriesNav():
+    st.sidebar.page_link("pages/22_Deliveries.py", label="Deliveries Page", icon="📦")
+    
+def SupplierMaterialsNav():
+    st.sidebar.page_link("pages/23_ViewMaterials.py", label="Materials Page", icon="🥄")
+    
 
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -102,12 +147,28 @@ def SideBarLinks(show_home=False):
         # If the user is a baker, give them access to the baker pages
         if st.session_state["role"] == "baker":
             BakerHomeNav()
-            #BakerStockNav()
+            BakerStockNav()
+            BakerIngredientsNav()
+            BakerMaterialsNav()
             
         # If the user is a baker, give them access to the baker pages
         if st.session_state["role"] == "cashier":
             CashierHomeNav()
-            #CashierStockNav()
+            CashierStockNav()
+            CashierIngredientsNav()
+            CashierMaterialsNav()
+            
+        # If the user is a supplier, give them access to the supplier pages
+        if st.session_state["role"] == "supplier":
+            SupplierHomeNav()
+            SupplierDeliveriesNav()
+            SupplierIngredientsNav()
+            SupplierMaterialsNav()
+            
+        if st.session_state["role"] == "Manager":
+            ManagerPageNav()
+            
+
                 
 
     # Always show the About page at the bottom of the list of links

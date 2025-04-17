@@ -59,7 +59,7 @@ with col1:
     if st.button("🚚 Sally Supplier - Delivery Driver", use_container_width=True, type='primary'):
         st.session_state['authenticated'] = True
         st.session_state['role'] = 'supplier'
-        st.session_state['first_name'] = 'SysAdmin'
+        st.session_state['first_name'] = 'Sally'
         st.switch_page('pages/20_Supplier_Home.py')
 
 with col2:
