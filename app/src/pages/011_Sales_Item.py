@@ -56,8 +56,16 @@ try:
             revenue_response.raise_for_status()
             result = revenue_response.json()
 
-            st.success(f"Total Revenue for '{result['MenuItem']}':")
-            st.metric(label="💵 Revenue", value=f"${result['TotalRevenue']:.2f}")
+            revenue = result.get("TotalRevenue", 0)
+
+            try:
+                revenue_float = float(revenue)
+            except (ValueError, TypeError):
+                revenue_float = 0.0
+
+            st.success(f"Total Revenue for '{result.get('MenuItem', selected_item)}':")
+            st.metric(label="💵 Revenue", value=f"${revenue_float:.2f}")
+
         except requests.exceptions.RequestException as e:
             st.error("Failed to fetch revenue.")
             st.text(f"Error: {e}")
