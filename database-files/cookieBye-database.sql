@@ -97,9 +97,7 @@ ALTER TABLE Equipment MODIFY ID INT AUTO_INCREMENT;
 -- This table represents the breakdown of a supply order into quantities for ingredients,
 -- materials, and equipment.
 CREATE TABLE OrderQuantity
-(
-    OrderQuantityID    INT UNIQUE PRIMARY KEY AUTO_INCREMENT,
-    OrderID            INT,
+(   OrderID            INT,
     IngredientID       INT UNIQUE DEFAULT NULL,
     MaterialsID        INT UNIQUE DEFAULT NULL,
     EquipmentID        INT UNIQUE DEFAULT NULL,
@@ -137,13 +135,8 @@ CREATE TABLE Costs
     Type          VARCHAR(50),
     PaymentDate   DATETIME,
     PaymentAmount DECIMAL(10, 2),
-<<<<<<< Updated upstream
     ManagerID     INT UNIQUE,                            -- Foreign Key to Manager (who reviews/receives costs)
     SupplyOrderID INT,                         -- Foreign Key to SupplyOrder (if applicable)
-=======
-    ManagerID     INT UNIQUE, 
-    SupplyOrderID INT,                            -- Foreign Key to Manager (who reviews/receives costs)
->>>>>>> Stashed changes
     CONSTRAINT fk_8 FOREIGN KEY (`ManagerID`) REFERENCES Manager (`ID`)
         ON UPDATE RESTRICT ON DELETE SET NULL
 );
