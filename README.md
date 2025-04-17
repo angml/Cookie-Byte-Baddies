@@ -2,6 +2,13 @@
 
 Welcome to **CookieByte**, a full-stack cafe management platform designed for tracking inventory, sales, employee management, costs, and more using a microservices architecture with Docker, MySQL, Flask, and Streamlit.
 
+Our team members and Github Usernames: 
+1. Angelia Loo (angml)
+2. Mahika Sharma (mahikasharma)
+3. Amy Baez (amyb25)
+4. Riyana Roy (riyanaro / Riyana)
+5. Emily Inga (emilycs26)
+
 ## 📦 Tech Stack
 
 - **Frontend:** Streamlit (Python)
