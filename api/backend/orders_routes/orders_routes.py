@@ -11,9 +11,9 @@ from backend.db_connection import db
 orders = Blueprint('Orders', __name__)
 
 #------------------------------------------------------------
-# Get all the orders
+# Get all the orders for mananger
 @orders.route('/orders', methods=['GET'])
-def get_all_orders():
+def get_manager_orders():
     query = '''
         SELECT os.ID, s.Name, os.OrderQuantity, os.OrderTotal, os.DateOrdered, os.DeliveryDate
         FROM SupplyOrder os JOIN Supplier s ON s.ID = os.SupplierID;
@@ -33,10 +33,14 @@ def get_all_orders():
     response.status_code = 200
     return response
 # ------------------------------------------------------------
-@orders.route('/orders/full', methods=['POST'])
-def add_full_order():
+# Add to the order history for manager
+@orders.route('/orders', methods=['POST'])
+def add_new_orders():
+    # In a POST request, there is a 
+    # collecting data from the request object
     data = request.json
-    
+
+    #extracting data
     supplier_name = data["SupplierName"]
     manager_fname = data["ManagerFirstName"]
     manager_lname = data["ManagerLastName"]
@@ -47,77 +51,34 @@ def add_full_order():
 
     cursor = db.get_db().cursor()
 
-    # get manager ID
-    cursor.execute("SELECT ID FROM Manager WHERE FirstName = %s AND LastName = %s", (manager_fname, manager_lname))
+    # look up manager id based on name
+    cursor.execute("SELECT ID FROM Manager WHERE FirstName = %s AND  LastName = %s", (manager_fname, manager_lname))
     manager_row = cursor.fetchone()
     if not manager_row:
         return jsonify({"error": "Manager not found"}), 400
     manager_id = manager_row['ID']
 
-    # get supplier ID
+    # look up supplier id based on name
     cursor.execute("SELECT ID FROM Supplier WHERE Name = %s", (supplier_name,))
     supplier_row = cursor.fetchone()
     if not supplier_row:
         return jsonify({"error": "Supplier not found"}), 400
     supplier_id = supplier_row['ID']
 
-    # insert order
-    insert_order_query = '''
-        INSERT INTO SupplyOrder(SupplierID, ManagerID, OrderTotal, OrderQuantity, DateOrdered, DeliveryDate)
-        VALUES(%s, %s, %s, %s, %s, %s)
+    # insert query with the supplier and manager ids
+    query = '''INSERT INTO SupplyOrder(SupplierID, ManagerID, OrderTotal, 
+                                    OrderQuantity, DateOrdered, DeliveryDate)
+    VALUES(%s, %s, %s, %s, %s, %s);                                                                    
     '''
-    cursor.execute(insert_order_query, (supplier_id, manager_id, total, quantity, date_ordered, date_delivered))
+    cursor = db.get_db().cursor()
+    cursor.execute(query,(supplier_id, manager_id, total, quantity, date_ordered, date_delivered))
     db.get_db().commit()
 
-    # get the new order ID
-    cursor.execute("SELECT LAST_INSERT_ID()")
-    row = cursor.fetchone()
-    order_id = row.get('LAST_INSERT_ID()')
-
-    # === Order details ===
-    ingredient_name = data["IngredientName"]
-    material_name = data["MaterialName"]
-    equipment_name = data["EquipmentName"]
-    ingredient_qty = data["IngredientQuantity"]
-    material_qty = data["MaterialQuantity"]
-    equipment_qty = data["EquipmentQuantity"]
-
-    # get ingredient ID
-    cursor.execute("SELECT IngredientID FROM Ingredients WHERE IngredientName = %s", (ingredient_name,))
-    ingredient_row = cursor.fetchone()
-    if not ingredient_row:
-        return jsonify({"error": f"Ingredient '{ingredient_name}' not found"}), 404
-    ingredient_id = ingredient_row['IngredientID']
-
-    # get material ID
-    cursor.execute("SELECT ID FROM Materials WHERE Name = %s", (material_name,))
-    material_row = cursor.fetchone()
-    if not material_row:
-        return jsonify({"error": f"Material '{material_name}' not found"}), 404
-    material_id = material_row['ID']
-
-    # get equipment ID
-    cursor.execute("SELECT ID FROM Equipment WHERE Name = %s", (equipment_name,))
-    equipment_row = cursor.fetchone()
-    if not equipment_row:
-        return jsonify({"error": f"Equipment '{equipment_name}' not found"}), 404
-    equipment_id = equipment_row['ID']
-
-    # insert details
-    insert_details_query = '''
-        INSERT INTO OrderQuantity (OrderID, IngredientID, MaterialsID, EquipmentID,
-                                   IngredientQuantity, MaterialQuantity, EquipmentQuantity)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-    '''
-    cursor.execute(insert_details_query, (order_id, ingredient_id, material_id, equipment_id,
-                                          ingredient_qty, material_qty, equipment_qty))
-    db.get_db().commit()
-
-    response = make_response(f"Successfully added order id: {order_id} with details", 200)
+    response = make_response("Successfully added order")
+    response.status_code = 200
     return response
-
 #------------------------------------------------------------
-# Update the delivery date and status for an order
+# Update the delivery date and status for an order for Supplier
 @orders.route('/orders', methods = ["PUT"])
 def update_deliverystatus():
     data = request.json
@@ -146,36 +107,51 @@ def update_deliverystatus():
     cursor.execute(query, (new_date, new_status, id, supplier_id))
     db.get_db().commit()
 
-    return make_response("Successfully updated delivery status", 200)
+    return make_response("Succesfully created order", 200)
 # ------------------------------------------------------------
-# get information about a specific order
-@orders.route('/order/<order_id>', methods=['GET'])
+# get information about a specific order for Supplier
+@orders.route('/orders/<order_id>', methods=['GET'])
 def get_order_detail(order_id):
-    try:
-        id = int(order_id) 
-    except ValueError:
-        return make_response(jsonify({"error": "Invalid ID"}), 400)
-
+    print(f"Received order_id: {order_id}")
     query = '''
-            SELECT so.OrderQuantity, so.DeliveryDate, so.Delivered, 
-                so.ID, oq.IngredientQuantity, oq.MaterialQuantity, 
-                oq.EquipmentQuantity, e.Name AS EquipmentName, 
+            SELECT 
+                so.ID, oq.IngredientQuantity, oq.MaterialQuantity,
+                oq.EquipmentQuantity, e.Name AS EquipmentName,
                 i.IngredientName, m.Name AS MaterialName
-            FROM SupplyOrder so 
-            JOIN OrderQuantity oq ON so.ID = oq.OrderID 
-            JOIN Equipment e ON e.ID = oq.EquipmentID 
-            JOIN Materials m ON m.ID = oq.MaterialsID 
-            JOIN Ingredients i ON i.IngredientID = oq.IngredientID 
+            FROM SupplyOrder so
+            JOIN OrderQuantity oq ON so.ID = oq.OrderID
+            LEFT OUTER JOIN Equipment e ON e.ID = oq.EquipmentID
+            LEFT OUTER JOIN Materials m ON m.ID = oq.MaterialsID
+            LEFT OUTER JOIN Ingredients i ON i.IngredientID = oq.IngredientID
             JOIN Supplier s ON so.SupplierID = s.ID
-            WHERE s.Name = %s AND so.ID = %s
+            WHERE s.Name = %s AND so.ID = %s;
             '''
     cursor = db.get_db().cursor()
-    cursor.execute(query,("Sanchez & Sons Sweet Deliveries", order_id))
+    cursor.execute(query,('Sanchez & Sons Sweet Deliveries', order_id))
     theData = cursor.fetchall()
- 
+
     response = make_response(jsonify(theData))
     response.status_code = 200
     return response
+# ------------------------------------------------------------
+# get orders information for Supplier
+@orders.route('/orders/supplier', methods=['GET'])
+def get_supplier_orders():
+    query = '''
+        SELECT so.ID, so.OrderQuantity, so.DeliveryDate, so.Delivered
+        FROM SupplyOrder so JOIN Supplier s 
+        ON so.SupplierID = s.ID
+        WHERE s.Name = %s;
+    '''
+    cursor = db.get_db().cursor()
+    cursor.execute(query, ("Sanchez & Sons Sweet Deliveries",))
+    theData = cursor.fetchall()
+    response = make_response(jsonify(theData))
+    response.status_code = 200
+    return response
+
+
+
 
 
 

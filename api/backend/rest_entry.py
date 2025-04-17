@@ -10,6 +10,9 @@ from backend.menu_items.menuItem_routes import menuItems
 from backend.cost_routes.cost_routes import costs
 from backend.equipment_routes.equipment_routes import equipment
 from backend.sales_routes.sales_routes import sales
+from backend.orders_routes.orders_routes import orders
+from backend.materials.material_routes import materials
+from backend.ingredients.ingredient_routes import ingredients
 
 import os 
 from dotenv import load_dotenv
@@ -55,7 +58,9 @@ def create_app():
     app.register_blueprint(costs, url_prefix='/costs')
     app.register_blueprint(equipment, url_prefix='/eq')
     app.register_blueprint(sales, url_prefix='/sales')
-
+    app.register_blueprint(orders, url_prefix = '/o' )
+    app.register_blueprint(materials, url_prefix = '/m' )
+    app.register_blueprint(ingredients, url_prefix = '/i' )
     # Don't forget to return the app object
     return app
 

@@ -69,6 +69,7 @@ CREATE TABLE Ingredients
     BurnRate       DECIMAL(10, 2)         NOT NULL,
     Price          DECIMAL(10, 2)         NOT NULL
 );
+ALTER TABLE Ingredients MODIFY IngredientID INT AUTO_INCREMENT;
 
 -- Table: Materials
 CREATE TABLE Materials
@@ -79,6 +80,7 @@ CREATE TABLE Materials
     BurnRate  DECIMAL(10, 2),
     Inventory INT
 );
+ALTER TABLE Materials MODIFY ID INT AUTO_INCREMENT;
 
 -- Table: Equipment
 CREATE TABLE Equipment
@@ -88,7 +90,6 @@ CREATE TABLE Equipment
     Price    DECIMAL(10, 2),
     Lifespan INT
 );
-
 -- Alter the table to add AUTO_INCREMENT
 ALTER TABLE Equipment MODIFY ID INT AUTO_INCREMENT;
 
@@ -136,8 +137,13 @@ CREATE TABLE Costs
     Type          VARCHAR(50),
     PaymentDate   DATETIME,
     PaymentAmount DECIMAL(10, 2),
+<<<<<<< Updated upstream
     ManagerID     INT UNIQUE,                            -- Foreign Key to Manager (who reviews/receives costs)
     SupplyOrderID INT,                         -- Foreign Key to SupplyOrder (if applicable)
+=======
+    ManagerID     INT UNIQUE, 
+    SupplyOrderID INT,                            -- Foreign Key to Manager (who reviews/receives costs)
+>>>>>>> Stashed changes
     CONSTRAINT fk_8 FOREIGN KEY (`ManagerID`) REFERENCES Manager (`ID`)
         ON UPDATE RESTRICT ON DELETE SET NULL
 );

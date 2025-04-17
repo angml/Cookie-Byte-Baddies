@@ -85,3 +85,41 @@ def update_equipment():
     db.get_db().commit()
 
     return make_response("Successfully updated equipment", 200)
+#------------------------------------------------------------
+# get top 10 oldest equipment
+@equipment.route('/equipment/oldest', methods=['GET'])
+def get_old_equipment():
+    cursor = db.get_db().cursor()
+    query = '''
+            SELECT e.ID, e.Name, e.Lifespan, so.DeliveryDate
+            FROM Equipment e JOIN OrderQuantity oq
+            ON e.ID = oq.EquipmentID JOIN SupplyOrder so
+            ON so.ID = oq.OrderID
+            ORDER BY so.DeliveryDate ASC
+            LIMIT 10;
+    '''
+    cursor.execute(query)
+    theData = cursor.fetchall()
+    response = make_response(jsonify(theData))
+    response.status_code = 200
+    return response
+
+#------------------------------------------------------------
+# get top 10 equipment with the shortest lifespans 
+@equipment.route('/equipment/short', methods=['GET'])
+def get_short_equipment():
+    cursor = db.get_db().cursor()
+    query = '''
+            SELECT e.ID, e.Name, e.Lifespan, so.DeliveryDate
+            FROM Equipment e JOIN OrderQuantity oq
+            ON e.ID = oq.EquipmentID JOIN SupplyOrder so
+            ON so.ID = oq.OrderID
+            ORDER BY e.Lifespan ASC
+            LIMIT 10;
+    '''
+    cursor.execute(query)
+    theData = cursor.fetchall()
+    response = make_response(jsonify(theData))
+    response.status_code = 200
+    return response
+
