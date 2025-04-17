@@ -69,8 +69,7 @@ INSERT INTO Employee(ID, FirstName, Position, Wage, HoursWorked, ManagerID, Last
             (2, 'Pearl', 'Baker', 25, 40,1,  'Thepnakorn' );
 
 INSERT INTO Costs(CostID, Type, PaymentDate, PaymentAmount, ManagerID, SupplyOrderID)
-     VALUES
-            (1, 'Labor', '2025-03-24', 1500.00, 1, NULL),
+     VALUES(1, 'Labor', '2025-03-24', 1500.00, 1, NULL),
             (2, 'Supplies', '2025-03-15', 750.50, 2, 1);
 
 INSERT INTO Sales(SalesID, Date, TotalSales)
@@ -82,6 +81,7 @@ INSERT INTO Sales(SalesID, Date, TotalSales)
 
 
 INSERT INTO TransactionDetails(SalesID, MenuItemID, MenuItemQuantity, Date)
+<<<<<<< Updated upstream
 VALUES (1, 1, 3, '2025-04-01 10:00:00'),
        (2, 2, 2, '2025-04-01 10:00:00'),
        (3, 3, 4, '2025-03-31 10:00:00');
@@ -93,3 +93,17 @@ VALUES (1, 1, 3, '2025-04-01 10:00:00'),
 
 
 
+=======
+    VALUES (1, 1, 3, '2025-04-01 10:00:00'),
+           (2, 2, 2, '2025-04-01 10:00:00'),
+           (3, 3, 4, '2025-03-31 10:00:00');
+
+SELECT e.ID, e.Name, e.Lifespan, so.DeliveryDate
+            FROM Equipment e JOIN OrderQuantity oq
+            ON e.ID = oq.EquipmentID JOIN SupplyOrder so
+            ON so.ID = oq.OrderID
+            ORDER BY e.Lifespan ASC
+            LIMIT 10;
+
+
+>>>>>>> Stashed changes

@@ -43,9 +43,6 @@ def create_material():
 
 # --------------------------------------------------------------------------------------------------
 
-
-
-
 # Update the inventory of a material
 @materials.route('/materials/update-inventory/<int:item_id>', methods=['PUT'])
 def update_mat_inventory(item_id):

@@ -14,15 +14,15 @@ st.write('')
 st.write('')
 st.write('### What would you like to do today?')
 
+if st.button('View and Update Orders', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/22_Deliveries.py')
+
 if st.button('Ingredients', 
              type='primary',
              use_container_width=True):
   st.switch_page('pages/21_Ingredients.py')
-
-if st.button('Supplies', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/21_ML_Model_Mgmt.py')
 
 if st.button('Materials', 
              type='primary',

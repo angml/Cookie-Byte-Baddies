@@ -42,13 +42,23 @@ st.markdown(
         }
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
+
+        .stTabs [role="tab"] {
+            padding: 0.75em 2em;
+            font-size: 1rem;
+        }
+
     </style>
     """,
     unsafe_allow_html=True
 )
 
-st.title("Current Equipment")
 
+# Redirects to equipment life status
+if st.button("View Equipment Lifecycle", type="primary", use_container_width=True):
+    st.switch_page("pages/012_EquipmentLife.py")   
+
+st.title("Current Equipment")
 #data frame
 def fetch_equipment():
     try:

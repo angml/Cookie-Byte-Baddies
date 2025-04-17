@@ -58,9 +58,9 @@ with col1:
 
     if st.button("🚚 Sally Supplier - Delivery Driver", use_container_width=True, type='primary'):
         st.session_state['authenticated'] = True
-        st.session_state['role'] = 'administrator'
+        st.session_state['role'] = 'supplier'
         st.session_state['first_name'] = 'SysAdmin'
-        st.switch_page('pages/20_Admin_Home.py')
+        st.switch_page('pages/20_Supplier_Home.py')
 
 with col2:
     if st.button("💁🏾‍♂️ Connor Cashier - Frontline Worker", use_container_width=True, type='primary'):
