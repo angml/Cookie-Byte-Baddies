@@ -100,7 +100,7 @@ with tab1:
                 "OrderID": int(selected["Order ID"].values[0]),
                 "DeliveryDate": delivery_datetime_str,  
                 "DeliveryStatus": updated_status,
-                "SupplierName": supplier_name
+                "CompanyName": supplier_name
             }
             try:
                 put_url = 'http://api:4000/o/orders'

@@ -99,7 +99,7 @@ if submit_order:
     delivery_date_str = date_ordered.strftime('%Y-%m-%d %H:%M:%S')
 
     new_order = {
-        "SupplierName": supplier_name,
+        "CompanyName": supplier_name,
         "ManagerFirstName": manager_fname,
         "ManagerLastName": manager_lname,
         "OrderTotal": order_total,
