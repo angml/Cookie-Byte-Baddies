@@ -20,8 +20,42 @@ def get_all_suppliers():
         return jsonify({"error": str(e), "data": []}), 500
     
 
-@suppliers.route('/s/suppliers', methods=['POST'])
+@suppliers.route('/suppliers', methods=['POST'])
 def add_supplier():
+    data = request.get_json(force = True)
+    query = '''
+        INSERT INTO Supplier (ID, CompanyName, ContactPerson, Phone, Email) 
+        VALUES (%s, %s, %s, %s, %s);
+    '''
+    cursor = db.get_db().cursor()
+    try:
+        cursor.execute(query, (
+            data['ID'], data['CompanyName'], data['ContactPerson'], data['Phone'], data['Email']
+        ))
+        db.get_db().commit()
+        return jsonify({"message": "Supplier addded!"}), 201
+    except Exception as e:
+        db.get_db().rollback()
+        return jsonify({"error": str(e)})
+
+
+@suppliers.route('/suppliers/<int:supplier_id>', methods=['DELETE'])
+def delete_supplier(supplier_id):
+    try:
+        cursor = cursor = db.get_db().cursor()
+        cursor.execute("DELETE FROM Supplier WHERE ID = %s", (supplier_id,))
+        affected = cursor.rowcount  # 💡 check before commit
+        db.get_db().commit()
+
+        if affected == 0:
+            return jsonify({'error': 'Supplier not found'}), 404
+        return jsonify({'message': 'Supplier deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@suppliers.route('/suppliers/<int:supplier_id>', methods=['PUT'])
+def update_supplier(supplier_id):
     try:
         data = request.get_json()
         name = data.get('CompanyName')
@@ -29,49 +63,18 @@ def add_supplier():
         phone = data.get('Phone')
         email = data.get('Email')
 
-        cursor = mysql.connection.cursor()
+        conn = db.get_db()
+        cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO Supplier (CompanyName, ContactPerson, Phone, Email) VALUES (%s, %s, %s)",
-            (name, person, phone, email)
-        )
-        mysql.connection.commit()
-        return jsonify({'message': 'Supplier added successfully'}), 201
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-# Route to delete a supplier by ID
-@suppliers.route('/s/suppliers/<int:supplier_id>', methods=['DELETE'])
-def delete_supplier(supplier_id):
-    try:
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            "DELETE FROM Supplier WHERE ID = %s", (supplier_id,)
-        )
-        mysql.connection.commit()
-        if cursor.rowcount == 0:
-            return jsonify({'error': 'Supplier not found'}), 404
-        return jsonify({'message': 'Supplier deleted successfully'})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
-# Route to update a supplier
-@suppliers.route('/s/suppliers/<int:supplier_id>', methods=['PUT'])
-def update_supplier(supplier_id):
-    try:
-        data = request.get_json()
-        name = data.get('Name')
-        person = data.get('ContactPerson')
-        phone = data.get('Phone')
-        email = data.get('Email')
-
-        cursor = mysql.connection.cursor()
-        cursor.execute(
-            "UPDATE Supplier SET Name = %s, ContactPerson = %s, Phone = %s, Email = %s WHERE ID = %s",
+            "UPDATE Supplier SET CompanyName = %s, ContactPerson = %s, Phone = %s, Email = %s WHERE ID = %s",
             (name, person, phone, email, supplier_id)
         )
-        mysql.connection.commit()
-        if cursor.rowcount == 0:
+        affected = cursor.rowcount  # 💡 capture early
+        conn.commit()
+
+        if affected == 0:
             return jsonify({'error': 'Supplier not found'}), 404
-        return jsonify({'message': 'Supplier updated successfully'})
+        return jsonify({'message': 'Supplier updated successfully'}), 200
     except Exception as e:
-        return jsonify({'error': str(e)})
+        return jsonify({'error': str(e)}), 500
+
