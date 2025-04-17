@@ -18,6 +18,8 @@ Our team members and Github Usernames:
 
 Our first client is 'Sip Happens,' a cafe that is utilizing our CookieByte product. 
 
+You can view our app demo here: https://youtu.be/VwmnkpJgb54
+
 ---
 
 ## Getting Started
