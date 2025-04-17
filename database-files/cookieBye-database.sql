@@ -1,4 +1,4 @@
-#DROP DATABASE IF EXISTS CookieByte;
+DROP DATABASE IF EXISTS CookieByte;
 # Creating a new database called CookieByte
 CREATE DATABASE CookieByte;
 # Set CookieByte as the current database
