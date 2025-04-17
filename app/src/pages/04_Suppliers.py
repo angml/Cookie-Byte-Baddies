@@ -104,7 +104,6 @@ with st.form("add_supplier_form"):
             print(response.status_code)
             if response.status_code == 201:
                 st.success("Supplier added successfully!")
-                st.experimental_rerun()
             else:
                 st.error("Failed to add supplier.")
         else:
@@ -126,7 +125,6 @@ for idx, row in suppliers_df.iterrows():
         if st.button("Update Supplier", key=f"update_{idx}"):
             if update_supplier(row['Supplier ID'], new_name, new_person, new_email, new_phone):
                 st.success("Supplier updated successfully!")
-                st.experimental_rerun()
             else:
                 st.error("Failed to update supplier.")
 
@@ -134,7 +132,6 @@ for idx, row in suppliers_df.iterrows():
         if st.button("Delete Supplier", key=f"delete_{idx}"):
             if delete_supplier(row['Supplier ID']):
                 st.success("Supplier deleted successfully!")
-                st.experimental_rerun()
             else:
                 st.error("Failed to delete supplier.")
 
