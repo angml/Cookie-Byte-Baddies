@@ -9,7 +9,7 @@ Our team members and Github Usernames:
 4. Riyana Roy (riyanaro / Riyana)
 5. Emily Inga (emilycs26)
 
-## 📦 Tech Stack
+## Tech Stack
 
 - **Frontend:** Streamlit (Python)
 - **Backend:** Flask (REST APIs)
@@ -18,7 +18,7 @@ Our team members and Github Usernames:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 To run this project on your local machine, follow the steps below:
 
