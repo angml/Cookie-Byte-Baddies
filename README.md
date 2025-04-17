@@ -30,10 +30,15 @@ cd cookiebyte-baddies
 ### 2. Add Secrets and Environment Files
 
 SECRET_KEY=someCrazyS3cR3T!Key.!
+
 DB_USER=root
+
 DB_HOST=db
+
 DB_PORT=3306
+
 DB_NAME=CookieByte
+
 MYSQL_ROOT_PASSWORD=<put a good password here>
 
 ### 3. Start the Containers
