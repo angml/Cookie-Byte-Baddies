@@ -39,21 +39,6 @@ def add_supplier():
         return jsonify({"error": str(e)})
 
 
-@suppliers.route('/suppliers/<int:supplier_id>', methods=['DELETE'])
-def delete_supplier(supplier_id):
-    try:
-        cursor = cursor = db.get_db().cursor()
-        cursor.execute("DELETE FROM Supplier WHERE ID = %s", (supplier_id,))
-        affected = cursor.rowcount  # 💡 check before commit
-        db.get_db().commit()
-
-        if affected == 0:
-            return jsonify({'error': 'Supplier not found'}), 404
-        return jsonify({'message': 'Supplier deleted successfully'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
 @suppliers.route('/suppliers/<int:supplier_id>', methods=['PUT'])
 def update_supplier(supplier_id):
     try:
@@ -78,3 +63,17 @@ def update_supplier(supplier_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@suppliers.route('/suppliers/<int:supplier_id>', methods=['DELETE'])
+def delete_supplier(supplier_id):
+    try:
+        cursor = cursor = db.get_db().cursor()
+        cursor.execute("DELETE FROM Supplier WHERE ID = %s", (supplier_id,))
+        affected = cursor.rowcount  # 💡 check before commit
+        db.get_db().commit()
+
+        if affected == 0:
+            return jsonify({'error': 'Supplier not found'}), 404
+        return jsonify({'message': 'Supplier deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
